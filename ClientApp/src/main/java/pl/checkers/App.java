@@ -63,19 +63,27 @@ public class App extends Application {
             for(int i = beginY; i < endY;i++) {
                 for(int j = beginX; j<=endX;j++) {
                     Circle c;
+
                     if (i % 2 == 0) {
                         c = new Circle(j * 50, i * yGap, 24);
                     } else {
                         c = new Circle(j * 50 + 25, i * yGap, 24);
                     }
+
                     c.setFill(color);
                     c.setOnMouseClicked((event -> {
                         if(currChequer == null) {
                             setCurrentChequer(c);
                             showMoves(currChequer);
+                        } else if ( currChequer.getCenterX() == c.getCenterX() && currChequer.getCenterY() == c.getCenterY()) {
+                            currChequer = null;
+                            for (Circle cir: circles)cir.setStroke(Color.BLACK);
                         }
                     }));
+                    c.setOnMouseMoved((e -> c.setOpacity(0.8)));
+                    c.setOnMouseExited((e -> c.setOpacity(1)));
                     chequers.add(c);
+
                 }
                 if (i % 2 == 0) beginX--;
                 else endX++;
@@ -97,7 +105,10 @@ public class App extends Application {
                             showMoves(currChequer);
                         }
                     }));
+                    c.setOnMouseMoved((e -> c.setOpacity(0.8)));
+                    c.setOnMouseExited((e -> c.setOpacity(1)));
                     chequers.add(c);
+
                 }
                 if (i % 2 == 0) beginX--;
                 else endX++;
@@ -136,18 +147,6 @@ public class App extends Application {
                                 moveChequer(c);
                                 currChequer = null;
                             }
-                           /* if(current == null) {
-                                current = c;
-                                c.setFill(Color.GREEN);
-                                paintNeighbours(c);
-                            } else if (calculateDist(c,current) < 60) {
-                                current = c;
-                                c.setFill(Color.CORNFLOWERBLUE);
-                                paintNeighbours(c);
-                            } else {
-                                current = null;
-                                for (Circle cir: circles)cir.setFill(Color.BLACK);
-                            }*/
                         }));
                 circles.add(c);
             }
@@ -167,13 +166,13 @@ public class App extends Application {
                     calculateDist(currChequer,c) < 60) {
                 ch.setCenterX(c.getCenterX());
                 ch.setCenterY(c.getCenterY());
-                currChequer = null;
+
                 for (Circle cir: circles)cir.setStroke(Color.BLACK);
             }
             if (ch.getCenterX() == currChequer.getCenterX() && ch.getCenterY() == currChequer.getCenterY() && c.getStroke() == Color.RED) {
                 ch.setCenterX(c.getCenterX());
                 ch.setCenterY(c.getCenterY());
-                currChequer = null;
+
                 for (Circle cir: circles)cir.setStroke(Color.BLACK);
             }
         }
@@ -206,10 +205,8 @@ public class App extends Application {
         double yDis = ch.getCenterY() - main.getCenterY() ;
 
         for(Circle c: circles) {
-
             if(c.getCenterX() - ch.getCenterX() == xDis && c.getCenterY() - ch.getCenterY() == yDis) {
                 c.setStroke(Color.RED);
-                System.out.println(xDis);
             }
         }
     }
@@ -220,7 +217,7 @@ public class App extends Application {
         return Math.sqrt(xDis*xDis + yDis*yDis);
     }
 
-    public static void main(String args[]){
+    public static void main(String[] args){
         launch(args);
     }
 
