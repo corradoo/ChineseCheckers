@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class App extends Application {
     private ArrayList<Circle> circles = new ArrayList<>();
+    private ArrayList<Circle> chequers = new ArrayList<>();
     private Circle current = null;
 
     @Override
@@ -31,8 +32,18 @@ public class App extends Application {
         overlay.setStyle("-fx-background-color: #202020");
 
         drawBoard();
+        drawBase(8,1,4,true,Color.BLUEVIOLET);
+        drawBase(4,10,4,true,Color.GREEN);
+        drawBase(4+9,10,4,true,Color.YELLOW);
+
+        drawBase(4+9,8,4,false,Color.ORANGE);
+        drawBase(4,8,4,false,Color.CORNFLOWERBLUE);
+        drawBase(8,17,4,false,Color.RED);
+
+
 
         overlay.getChildren().addAll(circles);
+        overlay.getChildren().addAll(chequers);
 
         root.getChildren().addAll(canvas, overlay);
 
@@ -40,11 +51,55 @@ public class App extends Application {
         stage.show();
     }
 
+    public void drawBase( int beginX,int beginY,int h, boolean normal, Color color) {
+        int endX = beginX;
+        int endY;
+        Circle c;
+        if(normal) {
+            endY = beginY + h;
+            for(int i = beginY; i < endY;i++) {
+                for(int j = beginX; j<=endX;j++) {
+                    if (i % 2 == 0) {
+                        c = new Circle(j * 55, i * 50, 25);
+                    } else {
+                        c = new Circle(j * 55 + 25, i * 50, 25);
+                    }
+                    c.setFill(color);
+                    c.setOnMouseClicked((event -> {
+                        System.out.println("chequer");
+                    }));
+                    chequers.add(c);
+                }
+                if (i % 2 == 0) beginX--;
+                else endX++;
+            }
+        } else {
+            endY = beginY - h;
+            for (int i = beginY; i > endY; i--) {
+                for (int j = beginX; j <= endX; j++) {
+                    if (i % 2 == 0) {
+                        c = new Circle(j * 55, i * 50, 25);
+                    } else {
+                        c = new Circle(j * 55 + 25, i * 50, 25);
+                    }
+                    c.setFill(color);
+                    c.setOnMouseClicked((event -> {
+                        System.out.println("chequer");
+                    }));
+                    chequers.add(c);
+                }
+                if (i % 2 == 0) beginX--;
+                else endX++;
+
+            }
+        }
+    }
+
     public void drawBoard() {
 
         /*Tworzenie planszy bez baz*/
         int beginX = 17 / 2 - 2, endX = beginX + 5;
-        int beginY = 4, endY = 13, middleY = 8;
+        int beginY = 5, endY = 14, middleY = 9;
         for (int i = beginY; i < endY; i++) {
             for (int j = beginX; j < endX; j++) {
                 Circle c;
