@@ -4,7 +4,10 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -27,38 +30,78 @@ public class App extends Application {
         stage.setTitle("Drawing Operations Test");
         Group root = new Group();
 
-        Canvas canvas = new Canvas(1000, 1000);
-        AnchorPane overlay = new AnchorPane();
+        TilePane t = new TilePane();
+        Pane overlay = new Pane();
 
         /*TODO ustawić autodopasowanie do okna*/
         circles.add(new Circle(1000, 1000, 1));
         overlay.setStyle("-fx-background-color: #202020");
 
         drawBoard();
-        drawBase(8,1,4,true,Color.BLUEVIOLET);
-        drawBase(4,10,4,true,Color.GREEN);
-        drawBase(4+9,10,4,true,Color.YELLOW);
+        drawBase(8,1,4,false);
+        drawBase(4,10,4,false);
+        drawBase(4+9,10,4,false);
 
-        drawBase(4+9,8,4,false,Color.ORANGE);
-        drawBase(4,8,4,false,Color.CORNFLOWERBLUE);
-        drawBase(8,17,4,false,Color.INDIANRED);
+        drawBase(4+9,8,4,true);
+        drawBase(4,8,4,true);
+        drawBase(8,17,4,true);
 
 
+        Button b6 = new Button("6 Players");
+        b6.setOnAction((e -> {
+            putChequers(8,1,4,false,Color.BLUEVIOLET);
+            putChequers(4,10,4,false,Color.GREEN);
+            putChequers(4+9,10,4,false,Color.YELLOW);
 
+            putChequers(4+9,8,4,true,Color.ORANGE);
+            putChequers(4,8,4,true,Color.CORNFLOWERBLUE);
+            putChequers(8,17,4,true,Color.INDIANRED);
+            overlay.getChildren().addAll(chequers);
+        }));
+
+        Button b4 = new Button("4 Players");
+        b4.setOnAction((e -> {
+            putChequers(4,10,4,false,Color.GREEN);
+            putChequers(4+9,10,4,false,Color.YELLOW);
+
+            putChequers(4+9,8,4,true,Color.ORANGE);
+            putChequers(4,8,4,true,Color.CORNFLOWERBLUE);
+            overlay.getChildren().addAll(chequers);
+        }));
+
+        Button b3 = new Button("3 Players");
+        b3.setOnAction((e -> {
+            putChequers(8,1,4,false,Color.BLUEVIOLET);
+            putChequers(4,10,4,false,Color.GREEN);
+            putChequers(4+9,10,4,false,Color.YELLOW);
+
+            overlay.getChildren().addAll(chequers);
+        }));
+
+        Button b2 = new Button("2 Players");
+        b2.setOnAction((e -> {
+            putChequers(8,1,4,false,Color.BLUEVIOLET);
+
+            putChequers(8,17,4,true,Color.INDIANRED);
+            overlay.getChildren().addAll(chequers);
+        }));
+
+
+        t.getChildren().addAll(b6,b4,b3,b2);
         overlay.getChildren().addAll(circles);
         overlay.getChildren().addAll(chequers);
 
-        root.getChildren().addAll(canvas, overlay);
+        root.getChildren().addAll(overlay,t);
 
         stage.setScene(new Scene(root));
         stage.show();
     }
 
-    public void drawBase( int beginX,int beginY,int h, boolean normal, Color color) {
+    public void drawBase( int beginX,int beginY,int h, boolean invert) {
         int endX = beginX;
         int endY;
 
-        if(normal) {
+        if(!invert) {
             endY = beginY + h;
             for(int i = beginY; i < endY;i++) {
                 for(int j = beginX; j<=endX;j++) {
@@ -69,15 +112,64 @@ public class App extends Application {
                     } else {
                         c = new Circle(j * 50 + 25, i * yGap, 24);
                     }
+                    c.setOnMouseClicked((event -> {
+                        if(currChequer != null) {
+                            moveChequer(c);
+                            currChequer = null;
+                        }
+                    }));
+                    circles.add(c);
 
+                }
+                if (i % 2 == 0) beginX--;
+                else endX++;
+            }
+        } else {
+            endY = beginY - h;
+            for (int i = beginY; i > endY; i--) {
+                for (int j = beginX; j <= endX; j++) {
+                    Circle c;
+                    if (i % 2 == 0) {
+                        c = new Circle(j * 50, i * yGap, 24);
+                    } else {
+                        c = new Circle(j * 50 + 25, i * yGap, 24);
+                    }
+                    c.setOnMouseClicked((event -> {
+                        if(currChequer != null) {
+                            moveChequer(c);
+                            currChequer = null;
+                        }
+                    }));
+                    circles.add(c);
+
+                }
+                if (i % 2 == 0) beginX--;
+                else endX++;
+
+            }
+        }
+    }
+
+    public void putChequers( int beginX,int beginY,int h, boolean invert, Color color) {
+        int endX = beginX;
+        int endY;
+
+        if(!invert) {
+            endY = beginY + h;
+            for(int i = beginY; i < endY;i++) {
+                for(int j = beginX; j<=endX;j++) {
+                    Circle c;
+
+                    if (i % 2 == 0) {
+                        c = new Circle(j * 50, i * yGap, 24);
+                    } else {
+                        c = new Circle(j * 50 + 25, i * yGap, 24);
+                    }
                     c.setFill(color);
                     c.setOnMouseClicked((event -> {
                         if(currChequer == null) {
                             setCurrentChequer(c);
                             showMoves(currChequer);
-                        } else if ( currChequer.getCenterX() == c.getCenterX() && currChequer.getCenterY() == c.getCenterY()) {
-                            currChequer = null;
-                            for (Circle cir: circles)cir.setStroke(Color.BLACK);
                         }
                     }));
                     c.setOnMouseMoved((e -> c.setOpacity(0.8)));
