@@ -5,11 +5,14 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -62,9 +65,6 @@ public class App extends Application {
 
 
     }
-
-
-
 
 
     @Override
@@ -159,7 +159,15 @@ public class App extends Application {
         buttons.add(b3);*/
         buttons.add(b2);
 
+
+        Text serverLog = new Text();
+        serverLog.setFont(new Font(25));
+        serverLog.setText("ELO tutaj wstaw wiadomość serwera");
+        serverLog.setLayoutX(600);
+        serverLog.setLayoutY(100);
+
         t.getChildren().addAll(b2);
+        overlay.getChildren().add(serverLog);
         overlay.getChildren().addAll(board.circles);
         overlay.getChildren().addAll(board.chequers);
 
@@ -171,7 +179,7 @@ public class App extends Application {
 
     public static void main(String[] args){
         launch(args);
-        App app= new App();
+        //App app= new App();
 
     }
 
