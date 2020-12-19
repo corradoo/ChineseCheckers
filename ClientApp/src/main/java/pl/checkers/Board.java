@@ -3,6 +3,11 @@ package pl.checkers;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class Board {
@@ -11,10 +16,24 @@ public class Board {
     public ArrayList<Circle> circles = new ArrayList<>();
     public ArrayList<Circle> chequers = new ArrayList<>();
 
+
     public Circle currChequer = null;
     public int yGap = 45;
+    Socket socket;
+    public PrintWriter out;
 
-    Board() {
+
+
+
+
+
+
+
+
+    Board(Socket socket, PrintWriter out) throws Exception {
+
+        this.socket=socket;
+        this.out=out;
         drawBoard();
         drawBase(8,1,4,false);
         drawBase(4,10,4,false);
@@ -44,7 +63,10 @@ public class Board {
                     }
                     c.setOnMouseClicked((event -> {
                         if(currChequer != null) {
-                            moveChequer(c);
+                            try {
+                                moveChequer(c);
+                            } catch (Exception e) {
+                            }
                             //currChequer = null;
                         }
                     }));
@@ -66,8 +88,12 @@ public class Board {
                     }
                     c.setOnMouseClicked((event -> {
                         if(currChequer != null) {
-                            moveChequer(c);
+                            try {
+                                moveChequer(c);
+                            } catch (Exception e) {
+                            }
                             currChequer = null;
+
                         }
                     }));
                     circles.add(c);
@@ -166,7 +192,11 @@ public class Board {
                 }
                 c.setOnMouseClicked((event -> {
                     if(currChequer != null) {
-                        moveChequer(c);
+                        try {
+                            moveChequer(c);
+                        } catch (Exception e) {
+
+                        }
                         currChequer = null;
                     }
                 }));
@@ -182,12 +212,16 @@ public class Board {
         }
     }
 
-    private void moveChequer( Circle c) {
+    private void moveChequer( Circle c) throws Exception {
         for (Circle ch:chequers) {
-            if(ch.getCenterX() == currChequer.getCenterX() && ch.getCenterY() == currChequer.getCenterY() &&
-                    calculateDist(currChequer,c) < 60) {
-                ch.setCenterX(c.getCenterX());
+            if(ch.getCenterX() == currChequer.getCenterX() && ch.getCenterY() == currChequer.getCenterY()) {
+                System.out.println("request");
+                requestMove(c, ch);
+
+                /*ch.setCenterX(c.getCenterX());
                 ch.setCenterY(c.getCenterY());
+
+                 */
                 for (Circle cir: circles)cir.setStroke(Color.BLACK);
             }
             if (ch.getCenterX() == currChequer.getCenterX() && ch.getCenterY() == currChequer.getCenterY() && c.getStroke() == Color.LIGHTCYAN) {
@@ -197,6 +231,29 @@ public class Board {
 
                 for (Circle cir: circles)cir.setStroke(Color.BLACK);
 
+            }
+        }
+    }
+
+    private void requestMove(Circle c, Circle ch){
+        /*ArrayList<Circle> moving= new ArrayList<>();
+        moving.add(0,c);
+        moving.add(1,ch);
+
+        OutputStream outputStream=socket.getOutputStream();
+        ObjectOutputStream objectOutputStream= new ObjectOutputStream(outputStream);
+        objectOutputStream.writeObject(moving);
+
+         */
+        System.out.println("w request");
+        out.println("MOVECH "+c.getCenterX()+" "+c.getCenterY()+" "+ch.getCenterX()+" "+ch.getCenterY());
+    }
+
+    public void moveResponse(double cX, double cY, double chX, double chY){
+        for (Circle ch:chequers) {
+            if(ch.getCenterX() == chX && ch.getCenterY() == chY) {
+                ch.setCenterX(cX);
+                ch.setCenterY(cY);
             }
         }
     }

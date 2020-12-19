@@ -1,8 +1,10 @@
 package pl.server;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import javafx.scene.shape.Circle;
+
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
@@ -10,7 +12,7 @@ public class Game {
 
     class Player implements Runnable{
 
-        private Player[] board=new Player[61];
+        //private Player[] board=new Player[61];
 
 
         String playerName;
@@ -24,8 +26,20 @@ public class Game {
         Player player5;
         Player player6;
 
+
          */
         Player nextPlayer;
+        /*InputStream inputStream;
+        ObjectInputStream objectInputStream;
+        OutputStream outputStream;
+        ObjectOutputStream objectOutputStream;
+        ArrayList<Circle> movingCircles= new ArrayList<>();
+
+         */
+
+
+
+        private Board board;
 
         boolean canMove;
 
@@ -34,6 +48,26 @@ public class Game {
             this.playerName=name;
         }
 
+
+        public void getMessage(String string){
+            /*inputStream= socket.getInputStream();
+            objectInputStream= new ObjectInputStream(inputStream);
+            movingCircles=(ArrayList<Circle>) objectInputStream.readObject();
+
+
+             */
+            String[] str= string.split(" ");
+
+            double cX= Double.parseDouble(str[0]);
+            double cY= Double.parseDouble(str[1]);
+            double chX= Double.parseDouble(str[2]);
+            double chY= Double.parseDouble(str[3]);
+
+            output.println("MOVECH ");
+
+        }
+
+
         public synchronized void move(int location, Player player){
             if(player!=currentPlayer){
                 throw new IllegalStateException("Not your turn");
@@ -41,10 +75,12 @@ public class Game {
             else if(player.player2==null /*| player.player3==null |player.player4==null |player.player5==null |player.player6==null*/){
                 throw new IllegalStateException("Wait for more players");
             }
-            else if(board[location]!=null){
+            /*else if(board[location]!=null){
                 throw new IllegalStateException("Can't move here");
             }
-            board[location]=currentPlayer;
+
+             */
+            //board[location]=currentPlayer;
             currentPlayer=currentPlayer.nextPlayer;
 
         }
@@ -52,9 +88,11 @@ public class Game {
 
         @Override
         public void run() {
-            System.out.println("Połaczono: "+socket);
+            System.out.println("Połaczono: "+playerName);
             try{
                 setup();
+                processCommands();
+
             }
             catch (Exception e){
                 e.printStackTrace();
@@ -77,12 +115,12 @@ public class Game {
                 case "Player1":
                     currentPlayer = this;
                     this.nextPlayer=player2;
-                    output.println("Waiting for other players");
+                    output.println("MESSAGE Waiting for other players");
                     break;
                 case "Player2":
                     player2 = currentPlayer;
                     player2.nextPlayer=player1;
-                    output.println("Player 2 joined");
+                    output.println("MESSAGE Player 2 joined");
                     break;
                 /*case "Player3":
                     player3 = currentPlayer;
@@ -111,7 +149,46 @@ public class Game {
 
         }
 
-        private void processCommands(){
+        /*private void processObject() throws Exception{
+            System.out.println("Start");
+            outputStream=socket.getOutputStream();
+            objectOutputStream.writeObject(movingCircles);
+            System.out.println("Przyjelo kulka");
+        }
+
+         */
+
+
+        private void processCommands() throws Exception {
+            System.out.println("process commands");
+            while (input.hasNextLine()){
+                System.out.println("w while");
+                var command= input.nextLine();
+                /*if(command.startsWith("QUIT")){
+                    return;
+                }
+                else if(command.startsWith("MOVECH")){
+
+                 */
+                    //getMessage(command.substring(7));
+                    System.out.println("w movech");
+                    System.out.println(command);
+                    output.println(command);
+                    //processObject();
+               // }
+
+            }
+        }
+
+        private void processMoveCommand(int location){
+            try{
+                move(location,this);
+                output.println("VALID_MOVE");
+                nextPlayer.output.println("PLAYER_MOVED "+location);
+            }
+            catch (IllegalStateException e){
+                output.println("MESSAGE "+e.getMessage());
+            }
 
         }
 
