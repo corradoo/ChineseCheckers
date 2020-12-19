@@ -38,19 +38,21 @@ public class App extends Application {
 
 
 
-    public void setConnect() {
-        //connect.connect("localhost");
+    public void setConnect() throws Exception {
+        this.connect=new Connect("localhost");
         this.socket= connect.socket;
         this.in= connect.in;
         this.out= connect.out;
 
     }
 
-    public App(){
+    /*public App(){
         setConnect();
     }
 
-    public void play() throws Exception{
+     */
+
+    public void play(){
         var response= in.nextLine();
         this.playerName=response.substring(8);
 
@@ -62,10 +64,17 @@ public class App extends Application {
 
 
 
+
+
     @Override
     public void start(Stage stage) {
 
-
+        try{
+            setConnect();
+        }
+        catch (Exception e){
+            System.out.println("Blad");
+        }
         stage.setTitle("Drawing Operations Test");
         Group root = new Group();
 
@@ -73,7 +82,7 @@ public class App extends Application {
         Pane overlay = new Pane();
 
         /*TODO ustawić autodopasowanie do okna*/
-        //circles.add(new Circle(1000, 1000, 1));
+        circles.add(new Circle(1000, 1000, 1));
         overlay.setStyle("-fx-background-color: #202020");
 
         drawBoard();
