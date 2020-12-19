@@ -39,8 +39,6 @@ public class Game {
 
 
 
-        private Board board;
-
         boolean canMove;
 
         Player(Socket socket,String name){
