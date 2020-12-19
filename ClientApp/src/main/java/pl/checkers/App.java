@@ -33,6 +33,8 @@ public class App extends Application {
 
     private int yGap = 45;
     */
+
+    private Text serverLog = new Text();
     private Board board;
     private Connect connect;
     private Socket socket;
@@ -60,7 +62,7 @@ public class App extends Application {
         var response= in.nextLine();
         this.playerName=response.substring(8);
         System.out.println(response);
-
+        serverLog.setText(response);
 
 
 
@@ -85,7 +87,7 @@ public class App extends Application {
 
         /*TODO ustawić autodopasowanie do okna*/
         overlay.getChildren().add(new Circle(1000, 1000, 1));
-        overlay.setStyle("-fx-background-color: #202020");
+        root.setStyle("-fx-background-color: #202020");
 
         /*drawBoard();
         drawBase(8,1,4,false);
@@ -160,9 +162,9 @@ public class App extends Application {
         buttons.add(b2);
 
 
-        Text serverLog = new Text();
+
         serverLog.setFont(new Font(25));
-        serverLog.setText("ELO tutaj wstaw wiadomość serwera");
+        //serverLog.setText("ELO tutaj wstaw wiadomość serwera");
         serverLog.setLayoutX(600);
         serverLog.setLayoutY(100);
 
