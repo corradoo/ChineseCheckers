@@ -19,10 +19,12 @@ public class Game {
         PrintWriter output;
         Player player1;
         Player player2;
-        Player player3;
+        /*Player player3;
         Player player4;
         Player player5;
         Player player6;
+
+         */
         Player nextPlayer;
 
         boolean canMove;
@@ -36,7 +38,7 @@ public class Game {
             if(player!=currentPlayer){
                 throw new IllegalStateException("Not your turn");
             }
-            else if(player.player2==null | player.player3==null |player.player4==null |player.player5==null |player.player6==null){
+            else if(player.player2==null /*| player.player3==null |player.player4==null |player.player5==null |player.player6==null*/){
                 throw new IllegalStateException("Wait for more players");
             }
             else if(board[location]!=null){
@@ -74,15 +76,15 @@ public class Game {
             switch (playerName) {
                 case "Player1":
                     currentPlayer = this;
-                    nextPlayer=player2;
+                    this.nextPlayer=player2;
                     output.println("Waiting for other players");
                     break;
                 case "Player2":
                     player2 = currentPlayer;
-                    player2.nextPlayer=player3;
+                    player2.nextPlayer=player1;
                     output.println("Player 2 joined");
                     break;
-                case "Player3":
+                /*case "Player3":
                     player3 = currentPlayer;
                     player3.nextPlayer=player4;
                     output.println("Player 3 joined");
@@ -102,6 +104,8 @@ public class Game {
                     player6.nextPlayer=player1;
                     output.println("Player 6 joined");
                     break;
+
+                 */
             }
 
 

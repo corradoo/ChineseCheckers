@@ -55,7 +55,7 @@ public class App extends Application {
     public void play(){
         var response= in.nextLine();
         this.playerName=response.substring(8);
-
+        System.out.println(response);
 
 
 

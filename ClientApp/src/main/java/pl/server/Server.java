@@ -17,10 +17,12 @@ public class Server {
                 Game game = new Game();
                 pool.execute(game.new Player(listener.accept(),"Player1"));
                 pool.execute(game.new Player(listener.accept(),"Player2"));
-                pool.execute(game.new Player(listener.accept(),"Player3"));
+                /*pool.execute(game.new Player(listener.accept(),"Player3"));
                 pool.execute(game.new Player(listener.accept(),"Player4"));
                 pool.execute(game.new Player(listener.accept(),"Player5"));
                 pool.execute(game.new Player(listener.accept(),"Player6"));
+
+                 */
 
             }
 
