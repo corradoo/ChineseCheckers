@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class Board {
 
+
     public ArrayList<Circle> circles = new ArrayList<>();
     public ArrayList<Circle> chequers = new ArrayList<>();
 
@@ -44,7 +45,7 @@ public class Board {
                     c.setOnMouseClicked((event -> {
                         if(currChequer != null) {
                             moveChequer(c);
-                            currChequer = null;
+                            //currChequer = null;
                         }
                     }));
                     circles.add(c);
@@ -187,14 +188,15 @@ public class Board {
                     calculateDist(currChequer,c) < 60) {
                 ch.setCenterX(c.getCenterX());
                 ch.setCenterY(c.getCenterY());
-
                 for (Circle cir: circles)cir.setStroke(Color.BLACK);
             }
-            if (ch.getCenterX() == currChequer.getCenterX() && ch.getCenterY() == currChequer.getCenterY() && c.getStroke() == Color.RED) {
+            if (ch.getCenterX() == currChequer.getCenterX() && ch.getCenterY() == currChequer.getCenterY() && c.getStroke() == Color.LIGHTCYAN) {
+
                 ch.setCenterX(c.getCenterX());
                 ch.setCenterY(c.getCenterY());
 
                 for (Circle cir: circles)cir.setStroke(Color.BLACK);
+
             }
         }
     }
@@ -219,16 +221,17 @@ public class Board {
         }
     }
 
-    private void showJumps(Circle main, Circle ch) {
+    private void showJumps(Circle main ,Circle ch) {
 
-        double xDis = ch.getCenterX() - main.getCenterX() ;
-        double yDis = ch.getCenterY() - main.getCenterY() ;
+        double xDis = ch.getCenterX() - main.getCenterX();
+        double yDis = ch.getCenterY() - main.getCenterY();
 
-        for(Circle c: circles) {
-            if(c.getCenterX() - ch.getCenterX() == xDis && c.getCenterY() - ch.getCenterY() == yDis) {
-                c.setStroke(Color.RED);
+        for (Circle c : circles) {
+            if (c.getCenterX() - ch.getCenterX() == xDis && c.getCenterY() - ch.getCenterY() == yDis) {
+                c.setStroke(Color.LIGHTCYAN);
             }
         }
+
     }
 
     public double calculateDist(Circle c1, Circle c2) {

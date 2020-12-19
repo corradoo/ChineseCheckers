@@ -26,13 +26,6 @@ import java.util.ArrayList;
 
 
 public class App extends Application {
-    /*private ArrayList<Circle> circles = new ArrayList<>();
-    private ArrayList<Circle> chequers = new ArrayList<>();
-    private Circle current = null;
-    private Circle currChequer = null;
-
-    private int yGap = 45;
-    */
 
     private Text serverLog = new Text();
     private Board board;
@@ -41,7 +34,6 @@ public class App extends Application {
     private Scanner in;
     private PrintWriter out;
     public String playerName;
-
 
 
     public void setConnect() throws Exception {
@@ -78,16 +70,15 @@ public class App extends Application {
         }
         catch (Exception e){
             System.out.println("Blad");
+            serverLog.setText("Nie ma serwera");
         }
         stage.setTitle("Drawing Operations Test");
-        Group root = new Group();
+        Pane root = new Pane();
 
         TilePane t = new TilePane();
         Pane overlay = new Pane();
 
-        /*TODO ustawić autodopasowanie do okna*/
-        overlay.getChildren().add(new Circle(1000, 1000, 1));
-        root.setStyle("-fx-background-color: #202020");
+        root.setStyle("-fx-background-color: #353535");
 
         /*drawBoard();
         drawBase(8,1,4,false);
@@ -145,7 +136,7 @@ public class App extends Application {
         }));
     */
         Button b2 = new Button("2 Players");
-        b2.setOnAction((e -> {
+       /* b2.setOnAction((e -> {
             board.putChequers(8,1,4,false,Color.BLUEVIOLET);
 
             board.putChequers(8,17,4,true,Color.INDIANRED);
@@ -173,16 +164,15 @@ public class App extends Application {
         overlay.getChildren().addAll(board.circles);
         overlay.getChildren().addAll(board.chequers);
 
+        board.putChequers(8,1,4,false,Color.BLUEVIOLET);
+        board.putChequers(8,17,4,true,Color.INDIANRED);
+        overlay.getChildren().addAll(board.chequers);
+
         root.getChildren().addAll(overlay,t);
 
         stage.setScene(new Scene(root));
         stage.show();
     }
 
-    public static void main(String[] args){
-        launch(args);
-        //App app= new App();
-
-    }
 
 }
