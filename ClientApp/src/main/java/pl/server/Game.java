@@ -25,6 +25,8 @@ public class Game {
         Player player6;
         Player nextPlayer;
 
+        boolean canMove;
+
         Player(Socket socket,String name){
             this.socket=socket;
             this.playerName=name;

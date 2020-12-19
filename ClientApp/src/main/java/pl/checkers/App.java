@@ -12,6 +12,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+import java.util.concurrent.Executors;
+
 import java.util.ArrayList;
 
 
@@ -23,10 +30,52 @@ public class App extends Application {
 
     private int yGap = 45;
 
+    private Connect connect;
+    private Socket socket;
+    private Scanner in;
+    private PrintWriter out;
+    public String playerName;
+
+
+
+    public void setConnect() throws Exception {
+        this.connect=new Connect("localhost");
+        this.socket= connect.socket;
+        this.in= connect.in;
+        this.out= connect.out;
+
+    }
+
+    /*public App(){
+        setConnect();
+    }
+
+     */
+
+    public void play(){
+        var response= in.nextLine();
+        this.playerName=response.substring(8);
+
+
+
+
+
+    }
+
+
+
+
+
     @Override
     public void start(Stage stage) {
 
-
+        try{
+            setConnect();
+            play();
+        }
+        catch (Exception e){
+            System.out.println("Blad");
+        }
         stage.setTitle("Drawing Operations Test");
         Group root = new Group();
 
@@ -330,8 +379,16 @@ public class App extends Application {
         return Math.sqrt(xDis*xDis + yDis*yDis);
     }
 
+
+
+
+
+
+
     public static void main(String[] args){
         launch(args);
+        App app= new App();
+
     }
 
 }
