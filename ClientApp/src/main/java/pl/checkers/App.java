@@ -46,6 +46,7 @@ public class App extends Application {
         drawBase(4,8,4,true);
         drawBase(8,17,4,true);
 
+        ArrayList<Button> buttons = new ArrayList<>();
 
         Button b6 = new Button("6 Players");
         b6.setOnAction((e -> {
@@ -57,6 +58,10 @@ public class App extends Application {
             putChequers(4,8,4,true,Color.CORNFLOWERBLUE);
             putChequers(8,17,4,true,Color.INDIANRED);
             overlay.getChildren().addAll(chequers);
+            for (Button b:buttons) {
+                b.setDisable(true);
+            }
+            b6.setStyle("-fx-opacity: 0.7");
         }));
 
         Button b4 = new Button("4 Players");
@@ -67,6 +72,10 @@ public class App extends Application {
             putChequers(4+9,8,4,true,Color.ORANGE);
             putChequers(4,8,4,true,Color.CORNFLOWERBLUE);
             overlay.getChildren().addAll(chequers);
+            for (Button b:buttons) {
+                b.setDisable(true);
+            }
+            b4.setStyle("-fx-opacity: 0.7");
         }));
 
         Button b3 = new Button("3 Players");
@@ -76,6 +85,10 @@ public class App extends Application {
             putChequers(4+9,10,4,false,Color.YELLOW);
 
             overlay.getChildren().addAll(chequers);
+            for (Button b:buttons) {
+                b.setDisable(true);
+            }
+            b3.setStyle("-fx-opacity: 0.7");
         }));
 
         Button b2 = new Button("2 Players");
@@ -84,7 +97,16 @@ public class App extends Application {
 
             putChequers(8,17,4,true,Color.INDIANRED);
             overlay.getChildren().addAll(chequers);
+            for (Button b:buttons) {
+                b.setDisable(true);
+            }
+            b2.setStyle("-fx-opacity: 0.7");
         }));
+
+        buttons.add(b6);
+        buttons.add(b4);
+        buttons.add(b3);
+        buttons.add(b2);
 
 
         t.getChildren().addAll(b6,b4,b3,b2);
@@ -285,7 +307,6 @@ public class App extends Application {
             yDis = ch.getCenterY()-main.getCenterY();
             dist = Math.sqrt(xDis*xDis + yDis*yDis);
             if(dist < 60 && dist !=0) {
-                System.out.println("Dist: "+dist);
                 showJumps(main,ch);
             }
         }
