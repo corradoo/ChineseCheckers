@@ -1,52 +1,120 @@
 package pl.checkers;
 
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.beans.EventHandler;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
 public class Board {
-
-
+    public Text dev = new Text();
+    public ArrayList<Field> fields = new ArrayList<>();
     public ArrayList<Circle> circles = new ArrayList<>();
-    public ArrayList<Circle> chequers = new ArrayList<>();
+    int gapX = 20,gapY = 17;
+    int oddRowX = 10;
+    int radius = 9;
+    double scale = 3;
+    int currentFieldNr = -1;
+    int currentPlayer = 1;
 
 
-    public Circle currChequer = null;
-    public int yGap = 45;
-    Socket socket;
-    public PrintWriter out;
-
-
-
-
-
-
-
-
-
-    Board(Socket socket, PrintWriter out) throws Exception {
-
-        this.socket=socket;
-        this.out=out;
+    Board() {
         drawBoard();
-        drawBase(8,1,4,false);
-        drawBase(4,10,4,false);
-        drawBase(4+9,10,4,false);
+        drawBase(8,1,4,false,1);
+        drawBase(4,10,4,false,5);
+        drawBase(4+9,10,4,false,3);
 
-        drawBase(4+9,8,4,true);
-        drawBase(4,8,4,true);
-        drawBase(8,17,4,true);
+        drawBase(4+9,8,4,true,2);
+        drawBase(4,8,4,true,6);
+        drawBase(8,17,4,true,4);
+        makeCircles();
+        dev.setFont(new Font(25));
+        dev.setText("ELO");
+        dev.setLayoutX(50);
+        dev.setLayoutY(50);
     }
+
+    private void makeCircles() {
+        for(Field f : fields) {
+            Circle c = new Circle(f.x*scale,f.y*scale,radius*scale);
+            c.setFill(getPlayerColor(f.player));
+            c.setStroke(Color.BLACK);
+            c.setOnMouseClicked((e -> handleMouseClick(c)));
+            circles.add(c);
+        }
+    }
+
+    private void handleMouseClick(Circle c) {
+        for(Field f: fields) {
+            double fX = c.getCenterX()/scale;
+            double fY = c.getCenterY()/scale;
+
+            if( fX == f.x && fY == f.y && f.player == currentPlayer) {
+                currentFieldNr = fields.indexOf(f);
+                showMoves();
+                dev.setText(("Chequer of player: "+ f.player + " pos:" + c.getCenterX() / scale) + " , " + (c.getCenterY() / scale));
+            }
+            if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0) move(fields.indexOf(f));
+        }
+
+    }
+
+    private void move(int jumpTo) {
+        fields.get(jumpTo).setPlayer(currentPlayer);
+        fields.get(currentFieldNr).player = 0;
+        currentFieldNr = -1;
+        hideMoves();
+        updateCircles();
+    }
+
+    private void showMoves() {
+        for (Circle c: circles) {
+            double moveDist = calculateDist(circles.get(1),circles.get(2));
+            if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).player == 0)
+                c.setStroke(Color.ORANGERED);
+        }
+    }
+
+    private void hideMoves() {
+        for (Circle c: circles) {
+            c.setStroke(Color.BLACK);
+
+        }
+    }
+
+    private void updateCircles() {
+        for(Circle c : circles) {
+            c.setFill(getPlayerColor(fields.get(circles.indexOf(c)).player));
+        }
+    }
+    private Color getPlayerColor(int player) {
+        switch(player) {
+            case 1:
+                return Color.BLUEVIOLET;
+            case 2:
+                return Color.ORANGE;
+            case 3:
+                return Color.GREEN;
+            case 4:
+                return Color.INDIANRED;
+            case 5:
+                return Color.YELLOW;
+            case 6:
+                return Color.CADETBLUE;
+            default:
+                return Color.BLACK;
+        }
+    }
+
     /**
      * Funkcja tworząca promienie na planszy
      */
-    public void drawBase( int beginX,int beginY,int h, boolean invert) {
+    public void drawBase( int beginX,int beginY,int h, boolean invert, int player) {
         int endX = beginX;
         int endY;
 
@@ -54,24 +122,15 @@ public class Board {
             endY = beginY + h;
             for(int i = beginY; i < endY;i++) {
                 for(int j = beginX; j<=endX;j++) {
-                    Circle c;
+                    Field f;
 
                     if (i % 2 == 0) {
-                        c = new Circle(j * 50, i * yGap, 24);
+                        f = new Field(j * gapX, i * gapY, player);
                     } else {
-                        c = new Circle(j * 50 + 25, i * yGap, 24);
+                        f = new Field(j * gapX + oddRowX, i * gapY,player);
                     }
-                    c.setOnMouseClicked((event -> {
-                        if(currChequer != null) {
-                            try {
-                                moveChequer(c);
-                            } catch (Exception e) {
-                            }
-                            //currChequer = null;
-                        }
-                    }));
-                    circles.add(c);
 
+                    fields.add(f);
                 }
                 if (i % 2 == 0) beginX--;
                 else endX++;
@@ -79,84 +138,15 @@ public class Board {
         } else {
             endY = beginY - h;
             for (int i = beginY; i > endY; i--) {
-                for (int j = beginX; j <= endX; j++) {
-                    Circle c;
-                    if (i % 2 == 0) {
-                        c = new Circle(j * 50, i * yGap, 24);
-                    } else {
-                        c = new Circle(j * 50 + 25, i * yGap, 24);
-                    }
-                    c.setOnMouseClicked((event -> {
-                        if(currChequer != null) {
-                            try {
-                                moveChequer(c);
-                            } catch (Exception e) {
-                            }
-                            currChequer = null;
-
-                        }
-                    }));
-                    circles.add(c);
-
-                }
-                if (i % 2 == 0) beginX--;
-                else endX++;
-
-            }
-        }
-    }
-
-    public void putChequers( int beginX,int beginY,int h, boolean invert, Color color) {
-        int endX = beginX;
-        int endY;
-
-        if(!invert) {
-            endY = beginY + h;
-            for(int i = beginY; i < endY;i++) {
                 for(int j = beginX; j<=endX;j++) {
-                    Circle c;
+                    Field f;
 
                     if (i % 2 == 0) {
-                        c = new Circle(j * 50, i * yGap, 24);
+                        f = new Field(j * gapX, i * gapY,player);
                     } else {
-                        c = new Circle(j * 50 + 25, i * yGap, 24);
+                        f = new Field(j * gapX + oddRowX, i * gapY,player);
                     }
-                    c.setFill(color);
-                    c.setOnMouseClicked((event -> {
-                        if(currChequer == null) {
-                            setCurrentChequer(c);
-                            showMoves(currChequer);
-                        }
-                    }));
-                    c.setOnMouseMoved((e -> c.setOpacity(0.8)));
-                    c.setOnMouseExited((e -> c.setOpacity(1)));
-                    chequers.add(c);
-
-                }
-                if (i % 2 == 0) beginX--;
-                else endX++;
-            }
-        } else {
-            endY = beginY - h;
-            for (int i = beginY; i > endY; i--) {
-                for (int j = beginX; j <= endX; j++) {
-                    Circle c;
-                    if (i % 2 == 0) {
-                        c = new Circle(j * 50, i * yGap, 24);
-                    } else {
-                        c = new Circle(j * 50 + 25, i * yGap, 24);
-                    }
-                    c.setFill(color);
-                    c.setOnMouseClicked((event -> {
-                        if(currChequer == null) {
-                            setCurrentChequer(c);
-                            showMoves(currChequer);
-                        }
-                    }));
-                    c.setOnMouseMoved((e -> c.setOpacity(0.8)));
-                    c.setOnMouseExited((e -> c.setOpacity(1)));
-                    chequers.add(c);
-
+                    fields.add(f);
                 }
                 if (i % 2 == 0) beginX--;
                 else endX++;
@@ -165,43 +155,26 @@ public class Board {
         }
     }
 
-    private void setCurrentChequer(Circle c) {
-        for (Circle ch: chequers) {
-            if(ch.getCenterX() == c.getCenterX() && ch.getCenterY() == c.getCenterY())
-                currChequer = ch;
 
-        }
-    }
 
-    private void showMoves(Circle chequer) {
-        paintNeighbours(chequer);
-    }
-
+    /**
+     * Tworzenie planszy bez baz
+     */
     public void drawBoard() {
 
-        /*Tworzenie planszy bez baz*/
         int beginX = 17 / 2 - 2, endX = beginX + 5;
         int beginY = 5, endY = 14, middleY = 9;
         for (int i = beginY; i < endY; i++) {
             for (int j = beginX; j < endX; j++) {
-                Circle c;
+                Field f;
                 if (i % 2 == 0) {
-                    c = new Circle(j * 50, i * yGap, 24);
+                    f = new Field(j * gapX, i * gapY,0);
                 } else {
-                    c = new Circle(j * 50 + 25, i * yGap, 24);
+                    f = new Field(j * gapX + oddRowX, i * gapY,0);
                 }
-                c.setOnMouseClicked((event -> {
-                    if(currChequer != null) {
-                        try {
-                            moveChequer(c);
-                        } catch (Exception e) {
-
-                        }
-                        currChequer = null;
-                    }
-                }));
-                circles.add(c);
+                fields.add(f);
             }
+
             if (i >= middleY) {
                 if (i % 2 == 1) beginX++;
                 else endX--;
@@ -210,85 +183,6 @@ public class Board {
                 else endX++;
             }
         }
-    }
-
-    private void moveChequer( Circle c) throws Exception {
-        for (Circle ch:chequers) {
-            if(ch.getCenterX() == currChequer.getCenterX() && ch.getCenterY() == currChequer.getCenterY()) {
-                System.out.println("request");
-                requestMove(c, ch);
-
-                /*ch.setCenterX(c.getCenterX());
-                ch.setCenterY(c.getCenterY());
-
-                 */
-                for (Circle cir: circles)cir.setStroke(Color.BLACK);
-            }
-            if (ch.getCenterX() == currChequer.getCenterX() && ch.getCenterY() == currChequer.getCenterY() && c.getStroke() == Color.LIGHTCYAN) {
-
-                ch.setCenterX(c.getCenterX());
-                ch.setCenterY(c.getCenterY());
-
-                for (Circle cir: circles)cir.setStroke(Color.BLACK);
-
-            }
-        }
-    }
-
-    private void requestMove(Circle c, Circle ch){
-        /*ArrayList<Circle> moving= new ArrayList<>();
-        moving.add(0,c);
-        moving.add(1,ch);
-
-        OutputStream outputStream=socket.getOutputStream();
-        ObjectOutputStream objectOutputStream= new ObjectOutputStream(outputStream);
-        objectOutputStream.writeObject(moving);
-
-         */
-        System.out.println("w request");
-        out.println("MOVECH "+c.getCenterX()+" "+c.getCenterY()+" "+ch.getCenterX()+" "+ch.getCenterY());
-    }
-
-    public void moveResponse(double cX, double cY, double chX, double chY){
-        for (Circle ch:chequers) {
-            if(ch.getCenterX() == chX && ch.getCenterY() == chY) {
-                ch.setCenterX(cX);
-                ch.setCenterY(cY);
-            }
-        }
-    }
-
-    public void paintNeighbours(Circle main) {
-        double dist;
-        double xDis;
-        double yDis;
-        for (Circle c: circles) {
-            xDis = c.getCenterX()-main.getCenterX();
-            yDis = c.getCenterY()-main.getCenterY();
-            dist = Math.sqrt(xDis*xDis + yDis*yDis);
-            if(dist < 60 && dist !=0) c.setStroke(Color.RED);
-        }
-        for (Circle ch: chequers) {
-            xDis = ch.getCenterX()-main.getCenterX();
-            yDis = ch.getCenterY()-main.getCenterY();
-            dist = Math.sqrt(xDis*xDis + yDis*yDis);
-            if(dist < 60 && dist !=0) {
-                showJumps(main,ch);
-            }
-        }
-    }
-
-    private void showJumps(Circle main ,Circle ch) {
-
-        double xDis = ch.getCenterX() - main.getCenterX();
-        double yDis = ch.getCenterY() - main.getCenterY();
-
-        for (Circle c : circles) {
-            if (c.getCenterX() - ch.getCenterX() == xDis && c.getCenterY() - ch.getCenterY() == yDis) {
-                c.setStroke(Color.LIGHTCYAN);
-            }
-        }
-
     }
 
     public double calculateDist(Circle c1, Circle c2) {
