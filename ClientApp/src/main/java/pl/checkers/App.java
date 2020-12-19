@@ -34,7 +34,7 @@ public class App extends Application {
     private Socket socket;
     private Scanner in;
     private PrintWriter out;
-    private String playerName;
+    public String playerName;
 
 
 
@@ -71,6 +71,7 @@ public class App extends Application {
 
         try{
             setConnect();
+            play();
         }
         catch (Exception e){
             System.out.println("Blad");
