@@ -1,14 +1,13 @@
 package pl.server;
 
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-
+import java.util.HashSet;
+import java.util.Set;
 
 public class Server extends Thread {
 
@@ -16,10 +15,11 @@ public class Server extends Thread {
 
     public Server() throws IOException {
         serverSocket = new ServerSocket(58000);
-        serverSocket.setSoTimeout(10000);
     }
+
     public void run() {
         while (true) {
+            Set<Socket> sockets = new HashSet<>();
             int players = 2;
             while(players > 0)
                 try {
@@ -34,7 +34,7 @@ public class Server extends Thread {
 
                     out.writeInt(players);
                     players--;
-                    socket.close();
+                    sockets.add(socket);
 
                 } catch (SocketTimeoutException s) {
                     System.out.println("Socket timed out!");
@@ -43,6 +43,7 @@ public class Server extends Thread {
                     e.printStackTrace();
                     break;
                 }
+                GameHandler gameHandler = new GameHandler(sockets);
         }
     }
     public static void main(String[] args) throws IOException {
@@ -53,6 +54,14 @@ public class Server extends Thread {
                 e.printStackTrace();
             }
             server.run();
+    }
+
+    class GameHandler {
+        Set<Socket> sockets;
+
+        public GameHandler(Set<Socket> sockets) {
+            this.sockets = sockets;
+        }
     }
 }
 

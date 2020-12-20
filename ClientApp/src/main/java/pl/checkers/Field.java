@@ -4,7 +4,6 @@ public class Field {
     int x;
     int y;
     int player;
-
     boolean empty = true;
 
     Field(int x, int y, int player) {
