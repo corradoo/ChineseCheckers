@@ -22,7 +22,7 @@ public class App extends Application {
 
     Stage gameStage;
     Text text = new Text();
-    Connector connector;
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -39,14 +39,12 @@ public class App extends Application {
         stage.setWidth(400);
         stage.show();
 
-        connectToServer();
-
         createGameStage();
         stage.hide();
 
     }
 
-    void createGameStage() {
+    void createGameStage() throws IOException {
         gameStage = new Stage();
         gameStage.setTitle("Chequers");
         Pane root = new Pane();
@@ -64,7 +62,7 @@ public class App extends Application {
         playerInfo.setLayoutX(50);
         playerInfo.setLayoutY(50);
 
-        board = new Board(connector.playerNr);
+        board = new Board();
         overlay.getChildren().addAll(serverLog,playerInfo);
         overlay.getChildren().addAll(board.circles);
 
@@ -74,8 +72,69 @@ public class App extends Application {
         gameStage.show();
     }
 
-    private void connectToServer() throws IOException {
-        connector = new Connector();
-        playerInfo.setText("Player " + connector.playerNr);
+
+    public void createButtons() {
+        /*Button b6 = new Button("6 Players");
+        b6.setOnAction((e -> {
+            putChequers(8,1,4,false,Color.BLUEVIOLET);
+            putChequers(4,10,4,false,Color.GREEN);
+            putChequers(4+9,10,4,false,Color.YELLOW);
+
+            putChequers(4+9,8,4,true,Color.ORANGE);
+            putChequers(4,8,4,true,Color.CORNFLOWERBLUE);
+            putChequers(8,17,4,true,Color.INDIANRED);
+            overlay.getChildren().addAll(board.chequers);
+            for (Button b:buttons) {
+                b.setDisable(true);
+            }
+            b6.setStyle("-fx-opacity: 0.7");
+        }));
+
+        Button b4 = new Button("4 Players");
+        b4.setOnAction((e -> {
+            putChequers(4,10,4,false,Color.GREEN);
+            putChequers(4+9,10,4,false,Color.YELLOW);
+
+            putChequers(4+9,8,4,true,Color.ORANGE);
+            putChequers(4,8,4,true,Color.CORNFLOWERBLUE);
+            overlay.getChildren().addAll(board.chequers);
+            for (Button b:buttons) {
+                b.setDisable(true);
+            }
+            b4.setStyle("-fx-opacity: 0.7");
+        }));
+
+        Button b3 = new Button("3 Players");
+        b3.setOnAction((e -> {
+            putChequers(8,1,4,false,Color.BLUEVIOLET);
+            putChequers(4,10,4,false,Color.GREEN);
+            putChequers(4+9,10,4,false,Color.YELLOW);
+
+            overlay.getChildren().addAll(board.chequers);
+            for (Button b:buttons) {
+                b.setDisable(true);
+            }
+            b3.setStyle("-fx-opacity: 0.7");
+        }));
+    */
+        Button b2 = new Button("2 Players");
+       /* b2.setOnAction((e -> {
+            board.putChequers(8,1,4,false,Color.BLUEVIOLET);
+
+            board.putChequers(8,17,4,true,Color.INDIANRED);
+            overlay.getChildren().addAll(board.chequers);
+            for (Button b:buttons) {
+                b.setDisable(true);
+            }
+            b2.setStyle("-fx-opacity: 0.7");
+        }));
+
+
+        */
+        /*buttons.add(b6);
+        buttons.add(b4);
+        buttons.add(b3);*/
+        buttons.add(b2);
     }
+
 }

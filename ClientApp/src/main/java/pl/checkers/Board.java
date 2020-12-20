@@ -6,9 +6,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
-public class Board {
+public class Board extends Thread {
 
     public ArrayList<Field> fields = new ArrayList<>();
     public ArrayList<Circle> circles = new ArrayList<>();
@@ -17,12 +21,16 @@ public class Board {
     int radius = 9;
     double scale = 3;
     int currentFieldNr = -1;
-    int currentPlayer = 1;
+    int currentPlayer;
     boolean YourTurn = true;
 
-    public Board(int player) {
+    Socket socket;
+    DataOutputStream toServer;
+    DataInputStream fromServer;
 
-        this.currentPlayer = player;
+    public Board() throws IOException {
+
+        //this.currentPlayer = player;
         drawBoard();
         drawBase(8,1,4,false,1);
         drawBase(4,10,4,false,5);
@@ -32,9 +40,29 @@ public class Board {
         drawBase(4,8,4,true,6);
         drawBase(8,17,4,true,4);
         makeCircles();
+        socket= new Socket("127.0.0.1",58000);
+        toServer= new DataOutputStream(socket.getOutputStream());
+        fromServer= new DataInputStream(socket.getInputStream());
+        chat();
 
     }
 
+
+    public void chat() throws IOException{
+        toServer.writeUTF("Czesc tutaj: " + socket.getLocalSocketAddress());
+        int intFromServer = fromServer.readInt();
+        System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
+        currentPlayer = intFromServer;
+    }
+
+    private void setTurn(int currentPlayer){
+        if(this.currentPlayer==currentPlayer){
+            YourTurn=true;
+        }
+        else{
+            YourTurn=false;
+        }
+    }
 
 
     private void makeCircles() {
@@ -48,16 +76,19 @@ public class Board {
     }
 
     private void handleMouseClick(Circle c) {
-        for(Field f: fields) {
-            double fX = c.getCenterX()/scale;
-            double fY = c.getCenterY()/scale;
+        if(YourTurn){
+            for(Field f: fields) {
+                double fX = c.getCenterX()/scale;
+                double fY = c.getCenterY()/scale;
 
-            if( fX == f.x && fY == f.y && f.player == currentPlayer) {
-                currentFieldNr = fields.indexOf(f);
-                showMoves();
+                if( fX == f.x && fY == f.y && f.player == currentPlayer) {
+                    currentFieldNr = fields.indexOf(f);
+                    showMoves();
+                }
+                if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 ) move(fields.indexOf(f));
             }
-            if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 ) move(fields.indexOf(f));
         }
+
 
     }
 

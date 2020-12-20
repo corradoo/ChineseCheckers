@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Connector {
+public class Connector extends Thread {
 
     Socket socket;
     DataOutputStream toServer;
@@ -27,4 +27,12 @@ public class Connector {
         socket.close();
     }
 
+    @Override
+    public void run() {
+
+
+
+
+
+    }
 }
