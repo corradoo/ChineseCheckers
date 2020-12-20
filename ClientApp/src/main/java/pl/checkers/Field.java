@@ -1,9 +1,5 @@
 package pl.checkers;
 
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-
 public class Field {
     int x;
     int y;

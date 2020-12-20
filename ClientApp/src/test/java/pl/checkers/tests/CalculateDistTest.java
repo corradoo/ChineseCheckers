@@ -4,6 +4,7 @@ import javafx.scene.shape.Circle;
 import org.junit.Test;
 import pl.checkers.Board;
 
+
 import static org.junit.Assert.assertEquals;
 
 public class CalculateDistTest {

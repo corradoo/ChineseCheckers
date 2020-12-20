@@ -21,6 +21,7 @@ public class Board {
     boolean YourTurn = true;
 
     public Board(int player) {
+
         this.currentPlayer = player;
         drawBoard();
         drawBase(8,1,4,false,1);
@@ -51,11 +52,11 @@ public class Board {
             double fX = c.getCenterX()/scale;
             double fY = c.getCenterY()/scale;
 
-            if( fX == f.x && fY == f.y && f.player == currentPlayer && YourTurn) {
+            if( fX == f.x && fY == f.y && f.player == currentPlayer) {
                 currentFieldNr = fields.indexOf(f);
                 showMoves();
             }
-            if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 && YourTurn) move(fields.indexOf(f));
+            if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 ) move(fields.indexOf(f));
         }
 
     }

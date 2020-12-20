@@ -9,6 +9,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -17,12 +18,37 @@ public class App extends Application {
     private ArrayList<Button> buttons = new ArrayList<>();
     private Text serverLog = new Text();
     private Text playerInfo = new Text();
-    public Board board = new Board(4);
+    public Board board;
+
+    Stage gameStage;
+    Text text = new Text();
+    Connector connector;
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
 
-        stage.setTitle("Chequers");
+        Pane rootC = new Pane();
+        text.setFont(new Font(25));
+        text.setText("connecting to server...");
+        text.setLayoutY(200);
+        text.setLayoutX(100);
+
+        rootC.getChildren().add(text);
+        stage.setScene(new Scene(rootC));
+        stage.setHeight(400);
+        stage.setWidth(400);
+        stage.show();
+
+        connectToServer();
+
+        createGameStage();
+        stage.hide();
+
+    }
+
+    void createGameStage() {
+        gameStage = new Stage();
+        gameStage.setTitle("Chequers");
         Pane root = new Pane();
         TilePane t = new TilePane();
         Pane overlay = new Pane();
@@ -38,14 +64,18 @@ public class App extends Application {
         playerInfo.setLayoutX(50);
         playerInfo.setLayoutY(50);
 
-
+        board = new Board(1);
         overlay.getChildren().addAll(serverLog,playerInfo);
         overlay.getChildren().addAll(board.circles);
 
         root.getChildren().addAll(overlay,t);
 
-        stage.setScene(new Scene(root));
-        stage.show();
+        gameStage.setScene(new Scene(root));
+        gameStage.show();
+    }
+
+    private void connectToServer() throws IOException {
+        connector = new Connector();
     }
 
     public void createButtons() {
