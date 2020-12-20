@@ -64,7 +64,7 @@ public class App extends Application {
         playerInfo.setLayoutX(50);
         playerInfo.setLayoutY(50);
 
-        board = new Board(1);
+        board = new Board(connector.playerNr);
         overlay.getChildren().addAll(serverLog,playerInfo);
         overlay.getChildren().addAll(board.circles);
 
