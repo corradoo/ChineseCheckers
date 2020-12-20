@@ -1,21 +1,15 @@
 package pl.checkers;
 
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.beans.EventHandler;
-import java.io.PrintWriter;
-import java.net.ConnectException;
-import java.net.Socket;
+
 import java.util.ArrayList;
 
 public class Board {
 
-    public Text dev = new Text();
-    public Text dev2 = new Text();
     public ArrayList<Field> fields = new ArrayList<>();
     public ArrayList<Circle> circles = new ArrayList<>();
     int gapX = 20,gapY = 17;
@@ -24,9 +18,10 @@ public class Board {
     double scale = 3;
     int currentFieldNr = -1;
     int currentPlayer = 1;
-    Connector con;
+    boolean YourTurn = true;
 
-    Board() {
+    public Board(int player) {
+        this.currentPlayer = player;
         drawBoard();
         drawBase(8,1,4,false,1);
         drawBase(4,10,4,false,5);
@@ -37,24 +32,9 @@ public class Board {
         drawBase(8,17,4,true,4);
         makeCircles();
 
-        dev.setFont(new Font(25));
-        dev.setText("ELO");
-        dev.setLayoutX(50);
-        dev.setLayoutY(50);
-
-        dev2.setFont(new Font(25));
-        dev2.setText("ELO z serwera");
-        dev2.setLayoutX(50);
-        dev2.setLayoutY(100);
-
-        try{
-            dev2.setText("Connecting");
-            con = new Connector();
-        } catch(Exception e) {
-            System.out.println("Connection failed");
-            dev2.setText("Connection failed");
-        }
     }
+
+
 
     private void makeCircles() {
         for(Field f : fields) {
@@ -71,12 +51,11 @@ public class Board {
             double fX = c.getCenterX()/scale;
             double fY = c.getCenterY()/scale;
 
-            if( fX == f.x && fY == f.y && f.player == currentPlayer) {
+            if( fX == f.x && fY == f.y && f.player == currentPlayer && YourTurn) {
                 currentFieldNr = fields.indexOf(f);
                 showMoves();
-                dev.setText(("Chequer of player: "+ f.player + " pos:" + c.getCenterX() / scale) + " , " + (c.getCenterY() / scale));
             }
-            if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0) move(fields.indexOf(f));
+            if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 && YourTurn) move(fields.indexOf(f));
         }
 
     }
@@ -87,12 +66,6 @@ public class Board {
         currentFieldNr = -1;
         hideMoves();
         updateCircles();
-        try{
-            con.send();
-            dev2.setText(con.getMessage());
-        } catch (Exception e) {
-            dev2.setText("Cannot send");
-        }
     }
 
     private void showMoves() {

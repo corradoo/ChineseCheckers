@@ -16,11 +16,11 @@ public class App extends Application {
 
     private ArrayList<Button> buttons = new ArrayList<>();
     private Text serverLog = new Text();
-    public Board board = new Board();
+    private Text playerInfo = new Text();
+    public Board board = new Board(4);
 
     @Override
     public void start(Stage stage) {
-
 
         stage.setTitle("Chequers");
         Pane root = new Pane();
@@ -34,8 +34,12 @@ public class App extends Application {
         serverLog.setLayoutX(600);
         serverLog.setLayoutY(100);
 
+        playerInfo.setFont(new Font(25));
+        playerInfo.setLayoutX(50);
+        playerInfo.setLayoutY(50);
 
-        overlay.getChildren().addAll(serverLog,board.dev, board.dev2);
+
+        overlay.getChildren().addAll(serverLog,playerInfo);
         overlay.getChildren().addAll(board.circles);
 
         root.getChildren().addAll(overlay,t);

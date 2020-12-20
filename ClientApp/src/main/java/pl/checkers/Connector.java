@@ -7,19 +7,27 @@ import java.util.Scanner;
 
 public class Connector {
 
-    Socket socket = new Socket("127.0.0.1", 58000);
-    DataOutputStream toServer = new DataOutputStream(socket.getOutputStream());
-    DataInputStream fromServer = new DataInputStream(socket.getInputStream());
+    Socket socket;
+    DataOutputStream toServer;
+    DataInputStream fromServer;
+    int playerNr = 1;
 
-    public Connector() throws IOException {}
+    public Connector() throws IOException {
+        socket =new Socket("127.0.0.1", 58000);
+        toServer = new DataOutputStream(socket.getOutputStream());
+        fromServer = new DataInputStream(socket.getInputStream());
+    }
 
     public void send() throws IOException {
-        toServer.writeUTF("Date");
+        toServer.writeUTF("Time");
     }
 
     public String getMessage() throws IOException {
         System.out.println(fromServer.readUTF());
-        return "Responsed!";
+        return "Time received from server:\n" + fromServer.readUTF();
     }
+    //Pobira ID gracza z serwera
+    public void getPlayerNr() {
 
+    }
 }
