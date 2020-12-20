@@ -9,7 +9,7 @@ public class Connector {
 
     Socket socket = new Socket("127.0.0.1", 58000);
     DataOutputStream toServer = new DataOutputStream(socket.getOutputStream());
-    DataInputStream fromServer = new DataInputStream(socket.getInputStream());
+    Scanner fromServer = new Scanner(socket.getInputStream());
 
     public Connector() throws IOException {}
 
@@ -18,8 +18,8 @@ public class Connector {
     }
 
     public String getMessage() throws IOException {
-        System.out.println(fromServer.readUTF());
-        return "Responsed!";
+        System.out.println(fromServer.nextLine());
+        return "Responded!";
     }
 
 }

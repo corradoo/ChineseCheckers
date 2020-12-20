@@ -54,6 +54,14 @@ public class Board {
             System.out.println("Connection failed");
             dev2.setText("Connection failed");
         }
+        //listener();
+    }
+
+
+    private void listener(){
+        while(con.fromServer.hasNextLine()){
+            dev2.setText(con.fromServer.nextLine());
+        }
     }
 
     private void makeCircles() {
