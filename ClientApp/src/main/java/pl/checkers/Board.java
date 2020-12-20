@@ -8,11 +8,14 @@ import javafx.scene.text.Text;
 
 import java.beans.EventHandler;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.ArrayList;
 
 public class Board {
+
     public Text dev = new Text();
+    public Text dev2 = new Text();
     public ArrayList<Field> fields = new ArrayList<>();
     public ArrayList<Circle> circles = new ArrayList<>();
     int gapX = 20,gapY = 17;
@@ -21,7 +24,7 @@ public class Board {
     double scale = 3;
     int currentFieldNr = -1;
     int currentPlayer = 1;
-
+    Connector con;
 
     Board() {
         drawBoard();
@@ -33,10 +36,24 @@ public class Board {
         drawBase(4,8,4,true,6);
         drawBase(8,17,4,true,4);
         makeCircles();
+
         dev.setFont(new Font(25));
         dev.setText("ELO");
         dev.setLayoutX(50);
         dev.setLayoutY(50);
+
+        dev2.setFont(new Font(25));
+        dev2.setText("ELO z serwera");
+        dev2.setLayoutX(50);
+        dev2.setLayoutY(100);
+
+        try{
+            dev2.setText("Connecting");
+            con = new Connector();
+        } catch(Exception e) {
+            System.out.println("Connection failed");
+            dev2.setText("Connection failed");
+        }
     }
 
     private void makeCircles() {
@@ -70,6 +87,12 @@ public class Board {
         currentFieldNr = -1;
         hideMoves();
         updateCircles();
+        try{
+            con.send();
+            dev2.setText(con.getMessage());
+        } catch (Exception e) {
+            dev2.setText("Cannot send");
+        }
     }
 
     private void showMoves() {

@@ -1,28 +1,13 @@
 package pl.checkers;
 
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
-import java.util.concurrent.Executors;
 
 import java.util.ArrayList;
 
@@ -50,7 +35,7 @@ public class App extends Application {
         serverLog.setLayoutY(100);
 
 
-        overlay.getChildren().addAll(serverLog,board.dev);
+        overlay.getChildren().addAll(serverLog,board.dev, board.dev2);
         overlay.getChildren().addAll(board.circles);
 
         root.getChildren().addAll(overlay,t);
