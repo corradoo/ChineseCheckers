@@ -16,18 +16,15 @@ public class Connector {
         socket =new Socket("127.0.0.1", 58000);
         toServer = new DataOutputStream(socket.getOutputStream());
         fromServer = new DataInputStream(socket.getInputStream());
+        chat();
     }
 
-    public void send() throws IOException {
-        toServer.writeUTF("Time");
+    public void chat() throws IOException {
+        toServer.writeUTF("Czesc tutaj: " + socket.getLocalSocketAddress());
+        int intFromServer = fromServer.readInt();
+        System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
+        playerNr = intFromServer;
+        socket.close();
     }
 
-    public String getMessage() throws IOException {
-        System.out.println(fromServer.readUTF());
-        return "Time received from server:\n" + fromServer.readUTF();
-    }
-    //Pobira ID gracza z serwera
-    public void getPlayerNr() {
-
-    }
 }
