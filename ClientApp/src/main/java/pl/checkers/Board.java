@@ -22,7 +22,9 @@ public class Board {
     double scale = 3;
     int currentFieldNr = -1;
     int currentPlayer;
-    boolean yourTurn = true;
+    boolean yourTurn = false;
+
+    boolean moved=false;
 
     int movingField;
     int movingPlayer;
@@ -66,10 +68,13 @@ public class Board {
                     setMoving(fields.indexOf(f),currentPlayer,currentFieldNr);
                     move(currentPlayer,fields.indexOf(f), currentFieldNr);
 
+
                 }
             }
 
     }
+
+
 
     public void setMoving(int index, int player, int field) {
         this.movingField = field;
@@ -83,7 +88,10 @@ public class Board {
         currentFieldNr = -1;
         hideMoves();
         updateCircles();
+        moved=true;
     }
+
+
 
     public void resetMoving() {
         movingPlayer = 0;
