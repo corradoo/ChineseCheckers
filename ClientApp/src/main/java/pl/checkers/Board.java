@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Board extends Thread {
+public class Board {
 
     public ArrayList<Field> fields = new ArrayList<>();
     public ArrayList<Circle> circles = new ArrayList<>();
@@ -22,21 +22,14 @@ public class Board extends Thread {
     double scale = 3;
     int currentFieldNr = -1;
     int currentPlayer;
-    boolean YourTurn = true;
+    boolean yourTurn = true;
 
     int movingField;
     int movingPlayer;
     int movingIndex;
 
 
-
-    Socket socket;
-    DataOutputStream toServer;
-    DataInputStream fromServer;
-
-    public Board() throws IOException {
-
-        //this.currentPlayer = player;
+    public Board() {
         drawBoard();
         drawBase(8,1,4,false,1);
         drawBase(4,10,4,false,5);
@@ -46,86 +39,8 @@ public class Board extends Thread {
         drawBase(4,8,4,true,6);
         drawBase(8,17,4,true,4);
         makeCircles();
-        socket= new Socket("127.0.0.1",58000);
-        toServer= new DataOutputStream(socket.getOutputStream());
-        fromServer= new DataInputStream(socket.getInputStream());
-        chat();
-        start();
-
 
     }
-
-
-    @Override
-    public void run() {
-        int playerTurn;
-        String response;
-
-
-        while(true){
-
-            try {
-                playerTurn=fromServer.readInt();
-                System.out.println(playerTurn);
-                setTurn(playerTurn);
-                //if(!YourTurn){
-
-                int index= fromServer.readInt();
-                int currentField= fromServer.readInt();
-                System.out.println(index+" "+currentField);
-                move(playerTurn, index, currentField);
-
-                //}
-                /*else if(movingIndex!=0 && movingField!=0 && movingPlayer!= 0) {
-                    toServer.writeInt(movingPlayer);
-                    toServer.writeInt(movingIndex);
-                    toServer.writeInt(movingField);
-                    resetMoving();
-
-                }
-
-                 */
-
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-
-
-        }
-
-
-
-
-    }
-
-    public void resetMoving(){
-        movingPlayer=0;
-        movingIndex=0;
-        movingField=0;
-    }
-
-    public void setMoving(int index, int player, int field){
-        this.movingField=field;
-        this.movingIndex=index;
-        this.movingPlayer=player;
-    }
-
-    public void chat() throws IOException{
-        toServer.writeUTF("Czesc tutaj: " + socket.getLocalSocketAddress());
-        int intFromServer = fromServer.readInt();
-        System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
-        currentPlayer = intFromServer;
-
-    }
-
-    private void setTurn(int currentPlayer){
-        YourTurn= this.currentPlayer == currentPlayer;
-    }
-
 
     private void makeCircles() {
         for(Field f : fields) {
@@ -146,7 +61,7 @@ public class Board extends Thread {
                     currentFieldNr = fields.indexOf(f);
                     showMoves();
                 }
-                if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 && YourTurn){
+                if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 && yourTurn){
 
                     setMoving(fields.indexOf(f),currentPlayer,currentFieldNr);
                     move(currentPlayer,fields.indexOf(f), currentFieldNr);
@@ -156,7 +71,13 @@ public class Board extends Thread {
 
     }
 
-    private void move( int player,int jumpTo, int currentField) {
+    public void setMoving(int index, int player, int field) {
+        this.movingField = field;
+        this.movingIndex = index;
+        this.movingPlayer = player;
+    }
+
+    public void move( int player,int jumpTo, int currentField) {
         fields.get(jumpTo).setPlayer(player);
         fields.get(currentField).player = 0;
         currentFieldNr = -1;
@@ -164,7 +85,11 @@ public class Board extends Thread {
         updateCircles();
     }
 
-
+    public void resetMoving() {
+        movingPlayer = 0;
+        movingIndex = 0;
+        movingField = 0;
+    }
 
     private void showMoves() {
         for (Circle c: circles) {
@@ -181,7 +106,7 @@ public class Board extends Thread {
         }
     }
 
-    private void updateCircles() {
+    public void updateCircles() {
         for(Circle c : circles) {
             c.setFill(getPlayerColor(fields.get(circles.indexOf(c)).player));
         }
@@ -248,8 +173,6 @@ public class Board extends Thread {
             }
         }
     }
-
-
 
     /**
      * Tworzenie planszy bez baz
