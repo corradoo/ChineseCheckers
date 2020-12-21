@@ -22,7 +22,7 @@ public class Board extends Thread {
     double scale = 3;
     int currentFieldNr = -1;
     int currentPlayer;
-    boolean YourTurn = false;
+    boolean YourTurn = true;
 
     int movingField;
     int movingPlayer;
@@ -61,29 +61,30 @@ public class Board extends Thread {
         int playerTurn;
         String response;
 
+
         while(true){
+
             try {
                 playerTurn=fromServer.readInt();
+                System.out.println(playerTurn);
                 setTurn(playerTurn);
-                if(!YourTurn){
-                    try{
-                        int index= fromServer.readInt();
-                        int currentField= fromServer.readInt();
-                        move(playerTurn, index, currentField);
+                //if(!YourTurn){
 
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
+                int index= fromServer.readInt();
+                int currentField= fromServer.readInt();
+                System.out.println(index+" "+currentField);
+                move(playerTurn, index, currentField);
 
-                }
-                else if(movingIndex!=0 && movingField!=0 && movingPlayer!= 0) {
+                //}
+                /*else if(movingIndex!=0 && movingField!=0 && movingPlayer!= 0) {
                     toServer.writeInt(movingPlayer);
                     toServer.writeInt(movingIndex);
                     toServer.writeInt(movingField);
                     resetMoving();
 
                 }
+
+                 */
 
 
 
@@ -118,7 +119,7 @@ public class Board extends Thread {
         int intFromServer = fromServer.readInt();
         System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
         currentPlayer = intFromServer;
-        setTurn(1);
+
     }
 
     private void setTurn(int currentPlayer){
