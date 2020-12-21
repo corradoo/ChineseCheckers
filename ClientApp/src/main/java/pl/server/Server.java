@@ -39,6 +39,7 @@ public class Server extends Thread {
 
                     System.out.println(in.readUTF());
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                    clients.add(out);
 
                     Thread t = new playerHandler(socket, out, in, player);
                     out.writeInt(player);
@@ -53,24 +54,9 @@ public class Server extends Thread {
                     break;
                 }
             }
-            if(counter==0){
-                try{
-                    System.out.println(clients.size());
-                    for(OutputStream os : clients){
-                        os.write(1);
-                        counter++;
 
-                    }
 
-                }
-                catch (Exception e){
-                    e.printStackTrace();
 
-                }
-
-            }
-
-                
         }
 
 
@@ -98,7 +84,9 @@ public class Server extends Thread {
         DataOutputStream outputStream;
         int player;
         int nextPlayer;
-
+        int movingPlayer;
+        int movingField;
+        int movingIndex;
 
 
         playerHandler(Socket socket, DataOutputStream out, DataInputStream in,int player){
@@ -107,11 +95,58 @@ public class Server extends Thread {
             this.outputStream=out;
             this.inputStream=in;
             this.nextPlayer=player%2 +1;
+
         }
 
         @Override
         public void run() {
-            clients.add(outputStream);
+            try {
+                outputStream.writeInt(3);
+                System.out.println("wyslano");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("blad");
+            }
+            try{
+                outputStream.writeInt(2);
+                outputStream.writeInt(90);
+                System.out.println("przeszlo move");
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                System.out.println("blad move");
+            }
+
+            /*for(OutputStream outputStream : clients){
+                try{
+                    outputStream.write(2);
+                    outputStream.write(90);
+                    System.out.println("przeszlo move");
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+             */
+
+
+            /*while (true){
+                try{
+                    movingPlayer=inputStream.readInt();
+                    movingIndex
+
+                }
+                catch (Exception e){
+
+                }
+
+
+
+            }
+
+             */
 
 
         }
