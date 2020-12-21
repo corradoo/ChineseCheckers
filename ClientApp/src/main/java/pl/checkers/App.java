@@ -22,7 +22,7 @@ public class App extends Application {
 
     Stage gameStage;
     Text text = new Text();
-    Connector connector;
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -39,14 +39,12 @@ public class App extends Application {
         stage.setWidth(400);
         stage.show();
 
-        connectToServer();
-
         createGameStage();
         stage.hide();
 
     }
 
-    void createGameStage() {
+    void createGameStage() throws IOException {
         gameStage = new Stage();
         gameStage.setTitle("Chequers");
         Pane root = new Pane();
@@ -64,7 +62,7 @@ public class App extends Application {
         playerInfo.setLayoutX(50);
         playerInfo.setLayoutY(50);
 
-        board = new Board(connector.playerNr);
+        board = new Board();
         overlay.getChildren().addAll(serverLog,playerInfo);
         overlay.getChildren().addAll(board.circles);
 
@@ -74,8 +72,4 @@ public class App extends Application {
         gameStage.show();
     }
 
-    private void connectToServer() throws IOException {
-        connector = new Connector();
-        playerInfo.setText("Player " + connector.playerNr);
-    }
 }
