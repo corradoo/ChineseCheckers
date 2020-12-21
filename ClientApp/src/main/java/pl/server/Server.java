@@ -11,13 +11,14 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 
 public class Server extends Thread {
 
     ServerSocket serverSocket;
-    Set<OutputStream> clients= new HashSet<>();
+    private ArrayList<Player> players= new ArrayList<>();
 
 
     public Server() throws IOException {
@@ -27,32 +28,35 @@ public class Server extends Thread {
     public void run() {
         int player = 1;
         int counter=0;
+        SessionHandler sessionHandler;
+
         while (true) {
 
+            if(player==3&&counter==0){
+                sessionHandler= new SessionHandler();
+                sessionHandler.start();
+                counter++;
+            }
             while(player <3) {
                 try {
                     System.out.println("Waiting for clients on port:" + serverSocket.getLocalPort());
                     Socket socket = serverSocket.accept();
 
-                    System.out.println("Just connected to " + socket.getRemoteSocketAddress());
+
                     DataInputStream in = new DataInputStream(socket.getInputStream());
-
-                    System.out.println(in.readUTF());
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                    clients.add(out);
-
-                    Thread t = new playerHandler(socket, out, in, player);
                     out.writeInt(player);
-                    t.start();
-                    player++;
 
-                    //socket.close();
+                    Player p= new Player(socket,in,out, player);
+                    players.add(p);
+                    player++;
 
                 }
                 catch (IOException e) {
                     e.printStackTrace();
                     break;
                 }
+
             }
 
 
@@ -75,95 +79,58 @@ public class Server extends Thread {
     }
 
 
-
-    public class playerHandler extends Thread {
-
-
-        Socket socket;
-        DataInputStream inputStream;
-        DataOutputStream outputStream;
-        int player;
-        int nextPlayer;
-        int movingPlayer;
-        int movingField;
-        int movingIndex;
+    public class SessionHandler extends Thread{
 
 
-        playerHandler(Socket socket, DataOutputStream out, DataInputStream in,int player){
-            this.player=player;
-            this.socket=socket;
-            this.outputStream=out;
-            this.inputStream=in;
-            this.nextPlayer=player%2 +1;
-
-        }
-
-        @Override
-        public void run() {
-            try {
-                outputStream.writeInt(3);
-                System.out.println("wyslano");
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("blad");
-            }
+        public void init(){
             try{
-                outputStream.writeInt(2);
-                outputStream.writeInt(90);
-                System.out.println("przeszlo move");
+                for(Player player: players){
+                    player.outputStream.writeInt(1);
+                }
             }
             catch (Exception e){
                 e.printStackTrace();
-                System.out.println("blad move");
             }
+        }
 
-            /*for(OutputStream outputStream : clients){
-                try{
-                    outputStream.write(2);
-                    outputStream.write(90);
-                    System.out.println("przeszlo move");
+
+
+        @Override
+        public void run() {
+            init();
+            while (true){
+
+
+                for(Player player: players){
+
+                    player.getMessage();
+                    String msg= player.fromServer;
+                    int next= player.playerID%3 +1;
+                    int id=player.playerID;
+                    for(Player p : players){
+                        if(p.playerID!=id){
+                            p.sendMessage(msg);
+                        }
+                    }
+                    for(Player p: players){
+                        try {
+                            p.outputStream.writeInt(next);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+
                 }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
+
+
             }
-
-             */
-
-
-            /*while (true){
-                try{
-                    movingPlayer=inputStream.readInt();
-                    movingIndex
-
-                }
-                catch (Exception e){
-
-                }
-
-
-
-            }
-
-             */
 
 
         }
+
     }
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
 
 

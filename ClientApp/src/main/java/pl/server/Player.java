@@ -1,64 +1,53 @@
 package pl.server;
 
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Player {
-    private int playerID;
-    private Socket socket;
-    private DataInputStream fromPlayer;
-    private DataOutputStream toPlayer;
+
+    public Socket socket;
+    public DataInputStream inputStream;
+    public DataOutputStream outputStream;
+    public int playerID;
+
+    public String fromServer;
+    public String toServer;
+
+    Player(Socket socket, DataInputStream input, DataOutputStream output, int id) {
+        this.socket=socket;
+        this.inputStream=input;
+        this.outputStream=output;
+        this.playerID=id;
+    }
 
 
-    public Player(int ID, Socket s){
-        this.playerID=ID;
-        this.socket=s;
 
+
+    public void getMessage(){
+        while(true){
+            try{
+                fromServer=inputStream.readUTF();
+                break;
+            }
+            catch (Exception e){
+
+            }
+        }
+
+    }
+
+
+    public void sendMessage(String message){
         try{
-            this.fromPlayer= new DataInputStream(this.socket.getInputStream());
-            this.toPlayer= new DataOutputStream(this.socket.getOutputStream());
+            toServer=message;
+            outputStream.writeUTF(toServer);
         }
         catch (Exception e){
 
         }
     }
 
-    public void sendData(String data){
-        try{
-            this.toPlayer.writeBytes(data);
-        }
-        catch (Exception e){
-            System.out.println("sending: Player not found");
-        }
-    }
-
-    public String receiveData(){
-
-        try{
-            String data=this.fromPlayer.readUTF();
-            return data;
-        }
-        catch (Exception e){
-            System.out.println("Waiting: No response from Player");
-            return "blad";
-        }
-    }
-
-    public void closeConnection(){
-        try{
-            this.socket.close();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
-    public boolean isOnline(){
-        return this.socket.isConnected();
-    }
 
 
 }
