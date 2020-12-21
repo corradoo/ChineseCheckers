@@ -1,6 +1,7 @@
 package pl.checkers;
 
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -11,6 +12,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 
 public class App extends Application {
@@ -18,7 +20,7 @@ public class App extends Application {
     private ArrayList<Button> buttons = new ArrayList<>();
     private Text serverLog = new Text();
     private Text playerInfo = new Text();
-    public Board board;
+    public Game game;
 
     Stage gameStage;
     Text text = new Text();
@@ -62,9 +64,9 @@ public class App extends Application {
         playerInfo.setLayoutX(50);
         playerInfo.setLayoutY(50);
 
-        board = new Board();
+        game = new Game();
         overlay.getChildren().addAll(serverLog,playerInfo);
-        overlay.getChildren().addAll(board.circles);
+        overlay.getChildren().addAll(game.getBoard());
 
         root.getChildren().addAll(overlay,t);
 
