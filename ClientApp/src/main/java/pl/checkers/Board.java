@@ -22,7 +22,7 @@ public class Board extends Thread {
     double scale = 3;
     int currentFieldNr = -1;
     int currentPlayer;
-    boolean YourTurn = true;
+    boolean YourTurn = false;
 
     int movingField;
     int movingPlayer;
@@ -50,6 +50,8 @@ public class Board extends Thread {
         toServer= new DataOutputStream(socket.getOutputStream());
         fromServer= new DataInputStream(socket.getInputStream());
         chat();
+        start();
+
 
     }
 
@@ -84,9 +86,12 @@ public class Board extends Thread {
                 }
 
 
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+
 
 
         }
@@ -113,6 +118,7 @@ public class Board extends Thread {
         int intFromServer = fromServer.readInt();
         System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
         currentPlayer = intFromServer;
+        setTurn(1);
     }
 
     private void setTurn(int currentPlayer){
