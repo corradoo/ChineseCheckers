@@ -51,14 +51,15 @@ public class Server extends Thread {
                 }
         }
     }
-    public static void main(String[] args) throws IOException {
-            Thread server = null;
+    public static void main(String[] args){
+            Thread server;
             try {
                 server = new Server();
+                server.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            server.start();
+
     }
 
 

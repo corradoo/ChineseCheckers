@@ -24,6 +24,12 @@ public class Board extends Thread {
     int currentPlayer;
     boolean YourTurn = true;
 
+    int movingField;
+    int movingPlayer;
+    int movingIndex;
+
+
+
     Socket socket;
     DataOutputStream toServer;
     DataInputStream fromServer;
@@ -48,6 +54,60 @@ public class Board extends Thread {
     }
 
 
+    @Override
+    public void run() {
+        int playerTurn;
+        String response;
+
+        while(true){
+            try {
+                playerTurn=fromServer.readInt();
+                setTurn(playerTurn);
+                if(!YourTurn){
+                    try{
+                        int index= fromServer.readInt();
+                        int currentField= fromServer.readInt();
+                        move(playerTurn, index, currentField);
+
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+                else if(movingIndex!=0 && movingField!=0 && movingPlayer!= 0) {
+                    toServer.writeInt(movingPlayer);
+                    toServer.writeInt(movingIndex);
+                    toServer.writeInt(movingField);
+                    resetMoving();
+
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+
+
+    }
+
+    public void resetMoving(){
+        movingPlayer=0;
+        movingIndex=0;
+        movingField=0;
+    }
+
+    public void setMoving(int index, int player, int field){
+        this.movingField=field;
+        this.movingIndex=index;
+        this.movingPlayer=player;
+    }
+
     public void chat() throws IOException{
         toServer.writeUTF("Czesc tutaj: " + socket.getLocalSocketAddress());
         int intFromServer = fromServer.readInt();
@@ -56,12 +116,7 @@ public class Board extends Thread {
     }
 
     private void setTurn(int currentPlayer){
-        if(this.currentPlayer==currentPlayer){
-            YourTurn=true;
-        }
-        else{
-            YourTurn=false;
-        }
+        YourTurn= this.currentPlayer == currentPlayer;
     }
 
 
@@ -76,7 +131,6 @@ public class Board extends Thread {
     }
 
     private void handleMouseClick(Circle c) {
-        if(YourTurn){
             for(Field f: fields) {
                 double fX = c.getCenterX()/scale;
                 double fY = c.getCenterY()/scale;
@@ -85,20 +139,25 @@ public class Board extends Thread {
                     currentFieldNr = fields.indexOf(f);
                     showMoves();
                 }
-                if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 ) move(fields.indexOf(f));
-            }
-        }
+                if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 && YourTurn){
 
+                    setMoving(fields.indexOf(f),currentPlayer,currentFieldNr);
+                    move(currentPlayer,fields.indexOf(f), currentFieldNr);
+
+                }
+            }
 
     }
 
-    private void move(int jumpTo) {
-        fields.get(jumpTo).setPlayer(currentPlayer);
-        fields.get(currentFieldNr).player = 0;
+    private void move( int player,int jumpTo, int currentField) {
+        fields.get(jumpTo).setPlayer(player);
+        fields.get(currentField).player = 0;
         currentFieldNr = -1;
         hideMoves();
         updateCircles();
     }
+
+
 
     private void showMoves() {
         for (Circle c: circles) {
