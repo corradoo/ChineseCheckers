@@ -53,15 +53,17 @@ public class Server extends Thread {
 
                     DataInputStream in = new DataInputStream(socket.getInputStream());
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+
+                    out.writeInt(number);
+
                     out.writeInt(player);
 
-                    /** TUTAJ wysyla ilosc graczy **/
-                    //out.writeInt(number);
 
                     Player p= new Player(socket,in,out, player);
                     players.add(p);
                     player++;
                     //System.out.println(player+" | "+ counter+" | "+number);
+
 
                 }
                 catch (IOException e) {
