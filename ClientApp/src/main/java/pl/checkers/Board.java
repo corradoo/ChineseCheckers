@@ -2,14 +2,6 @@ package pl.checkers;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class Board {
@@ -33,13 +25,14 @@ public class Board {
 
     public Board() {
         drawBoard();
-        drawBase(8,1,4,false,1);
-        drawBase(4,10,4,false,5);
-        drawBase(4+9,10,4,false,3);
 
-        drawBase(4+9,8,4,true,2);
-        drawBase(4,8,4,true,6);
-        drawBase(8,17,4,true,4);
+        drawBase(8,1,4,false,1);
+        drawBase(4,10,4,false,0);
+        drawBase(4+9,10,4,false,0);
+
+        drawBase(4+9,8,4,true,0);
+        drawBase(4,8,4,true,0);
+        drawBase(8,17,4,true,2);
         makeCircles();
 
     }
@@ -59,7 +52,7 @@ public class Board {
                 double fX = c.getCenterX()/scale;
                 double fY = c.getCenterY()/scale;
 
-                if( fX == f.x && fY == f.y && f.player == currentPlayer) {
+                if( fX == f.x && fY == f.y && f.player == currentPlayer && yourTurn) {
                     currentFieldNr = fields.indexOf(f);
                     showMoves();
                 }
@@ -67,14 +60,10 @@ public class Board {
 
                     setMoving(fields.indexOf(f),currentPlayer,currentFieldNr);
                     move(currentPlayer,fields.indexOf(f), currentFieldNr);
-
-
                 }
             }
 
     }
-
-
 
     public void setMoving(int index, int player, int field) {
         this.movingField = field;
@@ -89,14 +78,6 @@ public class Board {
         hideMoves();
         updateCircles();
         moved=true;
-    }
-
-
-
-    public void resetMoving() {
-        movingPlayer = 0;
-        movingIndex = 0;
-        movingField = 0;
     }
 
     private void showMoves() {
@@ -119,6 +100,7 @@ public class Board {
             c.setFill(getPlayerColor(fields.get(circles.indexOf(c)).player));
         }
     }
+
     private Color getPlayerColor(int player) {
         switch(player) {
             case 1:
