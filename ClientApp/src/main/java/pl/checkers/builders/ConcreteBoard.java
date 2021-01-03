@@ -13,7 +13,7 @@ public abstract class ConcreteBoard implements BoardBuilder {
     /**
      * Funkcja tworząca promienie na planszy
      */
-    public void drawBase( int beginX,int beginY,int h, boolean invert, int player) {
+    public void drawBase( int beginX,int beginY,int h, boolean invert, int player, int base) {
         int endX = beginX;
         int endY;
 
@@ -24,9 +24,9 @@ public abstract class ConcreteBoard implements BoardBuilder {
                     Field f;
 
                     if (i % 2 == 0) {
-                        f = new Field(j * gapX, i * gapY, player);
+                        f = new Field(j * gapX, i * gapY, player, base);
                     } else {
-                        f = new Field(j * gapX + oddRowX, i * gapY,player);
+                        f = new Field(j * gapX + oddRowX, i * gapY,player,base);
                     }
 
                     fields.add(f);
@@ -41,9 +41,9 @@ public abstract class ConcreteBoard implements BoardBuilder {
                     Field f;
 
                     if (i % 2 == 0) {
-                        f = new Field(j * gapX, i * gapY,player);
+                        f = new Field(j * gapX, i * gapY,player,base);
                     } else {
-                        f = new Field(j * gapX + oddRowX, i * gapY,player);
+                        f = new Field(j * gapX + oddRowX, i * gapY,player,base);
                     }
                     fields.add(f);
                 }
@@ -65,9 +65,9 @@ public abstract class ConcreteBoard implements BoardBuilder {
             for (int j = beginX; j < endX; j++) {
                 Field f;
                 if (i % 2 == 0) {
-                    f = new Field(j * gapX, i * gapY,0);
+                    f = new Field(j * gapX, i * gapY,0,0);
                 } else {
-                    f = new Field(j * gapX + oddRowX, i * gapY,0);
+                    f = new Field(j * gapX + oddRowX, i * gapY,0,0);
                 }
                 fields.add(f);
             }

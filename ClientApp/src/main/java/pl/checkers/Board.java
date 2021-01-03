@@ -97,10 +97,27 @@ public class Board {
 
 
     private void showMoves() {
+        hideMoves();
+        double moveDist = calculateDist(circles.get(1),circles.get(2));
         for (Circle c: circles) {
-            double moveDist = calculateDist(circles.get(1),circles.get(2));
-            if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).getPlayer() == 0)
+
+            if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).getPlayer() == 0) {
                 c.setStroke(Color.ORANGERED);
+                showJumps(circles.get(currentFieldNr),c);
+            }
+        }
+
+    }
+
+    private void showJumps(Circle main, Circle ch) {
+
+        double xDis = ch.getCenterX() - main.getCenterX() ;
+        double yDis = ch.getCenterY() - main.getCenterY() ;
+
+        for(Circle c: circles) {
+            if(c.getCenterX() - ch.getCenterX() == xDis && c.getCenterY() - ch.getCenterY() == yDis) {
+                c.setStroke(Color.DARKCYAN);
+            }
         }
     }
 
