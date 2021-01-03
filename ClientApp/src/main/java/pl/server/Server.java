@@ -55,10 +55,13 @@ public class Server extends Thread {
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                     out.writeInt(player);
 
+                    /** TUTAJ wysyla ilosc graczy **/
+                    out.writeInt(number);
+
                     Player p= new Player(socket,in,out, player);
                     players.add(p);
                     player++;
-                    System.out.println(player+" | "+ counter+" | "+number);
+                    //System.out.println(player+" | "+ counter+" | "+number);
 
                 }
                 catch (IOException e) {
@@ -96,16 +99,19 @@ public class Server extends Thread {
 //index%playersCount +1
         public void init(){
             playersCount=players.size();
+            //System.out.println("PC: "+playersCount);
             Random random= new Random();
             int starting= random.nextInt(playersCount)+1;
-            System.out.println(starting);
+            //System.out.println(starting);
             table[0]=starting;
             for(int i=0; i<playersCount;i++){
                 table[i+1]=((starting+i)%playersCount)+1;
             }
-            System.out.println("TABLE 0 :"+table[0]);
+            /*System.out.println("TABLE 0 :"+table[0]);
             System.out.println("TABLE 1 :"+table[1]);
             System.out.println("TABLE 2 :"+table[2]);
+
+             */
 
             try{
                 for(Player player: players){

@@ -28,6 +28,7 @@ public class Game extends Thread {
     @Override
     public void run() {
         int playerTurn;
+        int boardSize;
 
         OUTER: while (true) {
 
@@ -35,6 +36,8 @@ public class Game extends Thread {
                 System.out.println("Czekam na kolejke");
                 playerTurn = fromServer.readInt();
                 System.out.println("juz wiem! "+playerTurn);
+                /**TUTAJ przyjmuje ilu jest graczy **/
+                boardSize=fromServer.readInt();
                 setTurn(playerTurn);
                 if(!board.yourTurn){
 
