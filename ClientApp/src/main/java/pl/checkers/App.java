@@ -55,17 +55,16 @@ public class App extends Application {
 
         root.setStyle("-fx-background-color: #353535");
 
-
-        serverLog.setFont(new Font(25));
-        serverLog.setLayoutX(600);
-        serverLog.setLayoutY(100);
-
-        playerInfo.setFont(new Font(25));
-        playerInfo.setLayoutX(50);
-        playerInfo.setLayoutY(50);
-
         game = new Game();
-        overlay.getChildren().addAll(serverLog,playerInfo);
+        game.serverInfo.setFont(new Font(25));
+        game.serverInfo.setLayoutX(50);
+        game.serverInfo.setLayoutY(100);
+
+        game.playerInfo.setFont(new Font(32));
+        game.playerInfo.setLayoutX(50);
+        game.playerInfo.setLayoutY(50);
+
+        overlay.getChildren().addAll(game.serverInfo,game.playerInfo);
         overlay.getChildren().addAll(game.getBoard());
 
         root.getChildren().addAll(overlay,t);

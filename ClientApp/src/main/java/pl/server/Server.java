@@ -1,19 +1,11 @@
 package pl.server;
 
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-
 
 public class Server extends Thread {
 
@@ -56,11 +48,7 @@ public class Server extends Thread {
                     e.printStackTrace();
                     break;
                 }
-
             }
-
-
-
         }
 
 
@@ -75,12 +63,10 @@ public class Server extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
     }
 
 
     public class SessionHandler extends Thread{
-
 
         public void init(){
             try{
@@ -93,19 +79,15 @@ public class Server extends Thread {
             }
         }
 
-
-
         @Override
         public void run() {
             init();
             while (true){
 
-
                 for(Player player: players){
-
                     player.getMessage();
                     String msg= player.fromServer;
-                    int next= player.playerID%3 +1;
+                    int next= player.playerID % players.size() +1;
                     int id=player.playerID;
                     for(Player p : players){
                         if(p.playerID!=id){
@@ -119,17 +101,9 @@ public class Server extends Thread {
                             e.printStackTrace();
                         }
                     }
-
-
-
                 }
-
-
             }
-
-
         }
-
     }
 }
 
