@@ -1,9 +1,10 @@
 package pl.checkers;
 
 public class Field {
+
     int x;
     int y;
-    int player;
+    private int player;
     boolean empty = true;
 
     public Field(int x, int y, int player) {
@@ -21,4 +22,15 @@ public class Field {
         return empty;
     }
 
+    public int getPlayer() {
+        return player;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }

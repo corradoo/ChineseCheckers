@@ -16,6 +16,7 @@ public class Server extends Thread {
 
     ServerSocket serverSocket;
     private ArrayList<Player> players= new ArrayList<>();
+    ServerBoard serverBoard;
 
 
     public Server() throws IOException {
@@ -35,6 +36,7 @@ public class Server extends Thread {
             number=scanner.nextInt();
         }
         System.out.println("Ilosc graczy: "+number);
+        serverBoard = new ServerBoard(number);
 
         while (true) {
 
@@ -76,10 +78,6 @@ public class Server extends Thread {
 
 
         }
-
-
-
-
     }
     public static void main(String[] args){
             Thread server;
@@ -129,22 +127,28 @@ public class Server extends Thread {
 
         @Override
         public void run() {
+            boolean validMove = false;
             init();
             while (true){
-
-
                 for(Player player: players){
-
                     if(player.playerID==table[index]){
                         index++;
                         index=index%playersCount;
-                        player.getMessage();
-                        String msg= player.fromServer;
-                        int next= table[index];
-                        int id=player.playerID;
-                        for(Player p : players){
-                            if(p.playerID!=id){
-                                p.sendMessage(msg);
+                        int next = table[index];
+                        validMove = false;
+                        while(!validMove) {
+                            player.getMessage();
+                            String msg = player.fromServer;
+
+                            int id = player.playerID;
+                            if (serverBoard.validateMove(msg)) {
+                                validMove = true;
+                                player.sendMessage("ok");
+                                for (Player p : players) {
+                                    p.sendMessage(msg);
+                                }
+                            } else {
+                                player.sendMessage("err");
                             }
                         }
                         for(Player p: players){
@@ -155,19 +159,9 @@ public class Server extends Thread {
                             }
                         }
                     }
-
-
-
-
-
                 }
-
-
             }
-
-
         }
-
     }
 }
 
