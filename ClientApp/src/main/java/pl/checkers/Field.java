@@ -5,12 +5,14 @@ public class Field {
     int x;
     int y;
     private int player;
+    int base;
     boolean empty = true;
 
-    public Field(int x, int y, int player) {
+    public Field(int x, int y, int player,int base) {
         this.x = x;
         this.y = y;
         this.player = player;
+        this.base = base;
     }
 
     public void setPlayer(int player) {
