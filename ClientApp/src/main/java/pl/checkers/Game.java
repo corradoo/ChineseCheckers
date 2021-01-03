@@ -52,7 +52,7 @@ public class Game extends Thread {
                     System.out.println("wysylanie");
                     INNER: while (true){
 
-                        System.out.println("");
+                        System.out.printf("");
                         if(board.moved){
                             toServer.writeUTF(board.movingIndex+" "+board.movingField);
                             System.out.println(board.movingPlayer+" "+board.movingIndex+" "+board.movingField);
