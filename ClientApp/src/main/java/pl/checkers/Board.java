@@ -2,19 +2,21 @@ package pl.checkers;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import pl.checkers.builders.*;
+
 import java.util.ArrayList;
 
 public class Board {
+    ConcreteBoard concrete;
 
-    public ArrayList<Field> fields = new ArrayList<>();
+    public ArrayList<Field> fields;
     public ArrayList<Circle> circles = new ArrayList<>();
-    int gapX = 20,gapY = 17;
-    int oddRowX = 10;
     int radius = 9;
     double scale = 3;
     int currentFieldNr = -1;
     int currentPlayer;
     boolean yourTurn = false;
+    int size;
 
     boolean moved=false;
 
@@ -23,16 +25,24 @@ public class Board {
     int movingIndex;
 
 
-    public Board() {
-        drawBoard();
-
-        drawBase(8,1,4,false,1);
-        drawBase(4,10,4,false,0);
-        drawBase(4+9,10,4,false,0);
-
-        drawBase(4+9,8,4,true,0);
-        drawBase(4,8,4,true,0);
-        drawBase(8,17,4,true,2);
+    public Board(int size) {
+        this.size = size;
+        /* Wzorzec budowniczego */
+        switch(size) {
+            case 2:
+                concrete = new BoardTwo();
+                break;
+            case 3:
+                concrete = new BoardThree();
+                break;
+            case 4:
+                concrete = new BoardFour();
+                break;
+            case 6:
+                concrete = new BoardSix();
+                break;
+        }
+        fields = concrete.getFields();
         makeCircles();
 
     }
@@ -117,78 +127,6 @@ public class Board {
                 return Color.CADETBLUE;
             default:
                 return Color.BLACK;
-        }
-    }
-
-    /**
-     * Funkcja tworząca promienie na planszy
-     */
-    public void drawBase( int beginX,int beginY,int h, boolean invert, int player) {
-        int endX = beginX;
-        int endY;
-
-        if(!invert) {
-            endY = beginY + h;
-            for(int i = beginY; i < endY;i++) {
-                for(int j = beginX; j<=endX;j++) {
-                    Field f;
-
-                    if (i % 2 == 0) {
-                        f = new Field(j * gapX, i * gapY, player);
-                    } else {
-                        f = new Field(j * gapX + oddRowX, i * gapY,player);
-                    }
-
-                    fields.add(f);
-                }
-                if (i % 2 == 0) beginX--;
-                else endX++;
-            }
-        } else {
-            endY = beginY - h;
-            for (int i = beginY; i > endY; i--) {
-                for(int j = beginX; j<=endX;j++) {
-                    Field f;
-
-                    if (i % 2 == 0) {
-                        f = new Field(j * gapX, i * gapY,player);
-                    } else {
-                        f = new Field(j * gapX + oddRowX, i * gapY,player);
-                    }
-                    fields.add(f);
-                }
-                if (i % 2 == 0) beginX--;
-                else endX++;
-
-            }
-        }
-    }
-
-    /**
-     * Tworzenie planszy bez baz
-     */
-    public void drawBoard() {
-
-        int beginX = 17 / 2 - 2, endX = beginX + 5;
-        int beginY = 5, endY = 14, middleY = 9;
-        for (int i = beginY; i < endY; i++) {
-            for (int j = beginX; j < endX; j++) {
-                Field f;
-                if (i % 2 == 0) {
-                    f = new Field(j * gapX, i * gapY,0);
-                } else {
-                    f = new Field(j * gapX + oddRowX, i * gapY,0);
-                }
-                fields.add(f);
-            }
-
-            if (i >= middleY) {
-                if (i % 2 == 1) beginX++;
-                else endX--;
-            } else {
-                if (i % 2 == 0) beginX--;
-                else endX++;
-            }
         }
     }
 

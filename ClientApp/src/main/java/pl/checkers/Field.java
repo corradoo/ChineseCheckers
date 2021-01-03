@@ -6,7 +6,7 @@ public class Field {
     int player;
     boolean empty = true;
 
-    Field(int x, int y, int player) {
+    public Field(int x, int y, int player) {
         this.x = x;
         this.y = y;
         this.player = player;
