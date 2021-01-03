@@ -35,15 +35,18 @@ public class Game extends Thread {
     public void run() {
         int playerTurn;
         int boardSize;
-
+        try {
+            boardSize=fromServer.readInt();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         OUTER: while (true) {
 
             try {
                 System.out.println("Czekam na kolejke");
                 playerTurn = fromServer.readInt();
                 System.out.println("juz wiem! "+playerTurn);
-                /**TUTAJ przyjmuje ilu jest graczy **/
-                //boardSize=fromServer.readInt();
+
                 setTurn(playerTurn);
                 if(!board.yourTurn){
 
