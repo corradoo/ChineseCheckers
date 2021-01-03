@@ -130,17 +130,27 @@ public class Server extends Thread {
             boolean validMove = false;
             init();
             while (true){
+                int winner=serverBoard.getWinner();
+                if(winner!=0){
+                    playersCount--;
+                    for(int i=0; i<table.length; i++){
+                        if(winner==table[i]) table[i]=0;
+                    }
+                }
                 for(Player player: players){
                     if(player.playerID==table[index]){
                         index++;
                         index=index%playersCount;
                         int next = table[index];
+                        if(next==0){
+                            index++;
+                            index=index%playersCount;
+                            next=table[index];
+                        }
                         validMove = false;
                         while(!validMove) {
                             player.getMessage();
                             String msg = player.fromServer;
-
-                            int id = player.playerID;
                             if (serverBoard.validateMove(msg)) {
                                 validMove = true;
                                 player.sendMessage("ok");

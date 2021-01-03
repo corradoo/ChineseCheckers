@@ -24,6 +24,10 @@ public class Field {
         return empty;
     }
 
+    public int getBase(){
+        return base;
+    }
+
     public int getPlayer() {
         return player;
     }
