@@ -132,7 +132,6 @@ public class Server extends Thread {
             while (true){
                 int winner=serverBoard.getWinner();
                 if(winner!=0){
-                    playersCount--;
                     for(int i=0; i<table.length; i++){
                         if(winner==table[i]) table[i]=0;
                     }
