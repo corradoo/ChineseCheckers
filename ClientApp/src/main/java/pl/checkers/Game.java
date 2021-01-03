@@ -1,13 +1,10 @@
 package pl.checkers;
 
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -24,23 +21,25 @@ public class Game extends Thread {
         socket = new Socket("127.0.0.1", 58000);
         toServer = new DataOutputStream(socket.getOutputStream());
         fromServer = new DataInputStream(socket.getInputStream());
-        board = new Board();
         playerInfo = new Text();
         serverInfo = new Text();
-        initServerMessage();
+
+        int boardSize;
+        try {
+            boardSize=fromServer.readInt();
+            board = new Board(boardSize);
+            initServerMessage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         start();
     }
 
     @Override
     public void run() {
         int playerTurn;
-        int boardSize;
-        try {
-            boardSize=fromServer.readInt();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        OUTER: while (true) {
+
+        while (true) {
 
             try {
                 System.out.println("Czekam na kolejke");
@@ -63,7 +62,7 @@ public class Game extends Thread {
                 else  {
                     System.out.println("wysylanie");
                     serverInfo.setText("Your Turn");
-                    INNER: while (true){
+                    while (true){
 
                         System.out.printf("");
                         if(board.moved){
@@ -71,7 +70,7 @@ public class Game extends Thread {
                             System.out.println(board.movingPlayer+" "+board.movingIndex+" "+board.movingField);
                             System.out.println("DONE");
                             serverInfo.setText("Not Your Turn");
-                            break INNER;
+                            break;
                         }
                     }
                 }
@@ -90,7 +89,6 @@ public class Game extends Thread {
         System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
         board.currentPlayer = intFromServer;
         playerInfo.setText("Player" + intFromServer);
-
     }
 
 

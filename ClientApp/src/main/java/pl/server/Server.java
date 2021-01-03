@@ -45,6 +45,7 @@ public class Server extends Thread {
                 sessionHandler.start();
                 counter++;
             }
+
             while(player <=number) {
                 try {
                     System.out.println("Waiting for clients on port:" + serverSocket.getLocalPort());
@@ -55,7 +56,6 @@ public class Server extends Thread {
                     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
                     out.writeInt(number);
-
                     out.writeInt(player);
 
 
