@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class Board {
     ConcreteBoard concrete;
+    Game game;
 
     public ArrayList<Field> fields;
     public ArrayList<Circle> circles = new ArrayList<>();
@@ -20,12 +21,15 @@ public class Board {
 
     boolean moved=false;
 
-    int movingField;
+    int startIndex;
     int movingPlayer;
-    int movingIndex;
+    int jumpIndex;
+
+    public Object locker;
 
 
-    public Board(int size) {
+    public Board(int size,Game game) {
+        this.game = game;
         this.size = size;
         /* Wzorzec budowniczego */
         switch(size) {
@@ -50,7 +54,7 @@ public class Board {
     private void makeCircles() {
         for(Field f : fields) {
             Circle c = new Circle(f.x*scale,f.y*scale,radius*scale);
-            c.setFill(getPlayerColor(f.player));
+            c.setFill(getPlayerColor(f.getPlayer()));
             c.setStroke(Color.BLACK);
             c.setOnMouseClicked((e -> handleMouseClick(c)));
             circles.add(c);
@@ -62,38 +66,40 @@ public class Board {
                 double fX = c.getCenterX()/scale;
                 double fY = c.getCenterY()/scale;
 
-                if( fX == f.x && fY == f.y && f.player == currentPlayer && yourTurn) {
+                if( fX == f.x && fY == f.y && f.getPlayer() == currentPlayer && yourTurn) {
                     currentFieldNr = fields.indexOf(f);
                     showMoves();
                 }
-                if(currentFieldNr > 0 && fX == f.x && fY == f.y && f.player == 0 && yourTurn){
+                if(currentFieldNr >= 0 && fX == f.x && fY == f.y && f.getPlayer() == 0 && yourTurn){
 
-                    setMoving(fields.indexOf(f),currentPlayer,currentFieldNr);
-                    move(currentPlayer,fields.indexOf(f), currentFieldNr);
+                    setMoving(fields.indexOf(f), currentPlayer, currentFieldNr);
+                   // move(currentPlayer,fields.indexOf(f), currentFieldNr);
+                    game.unlock();
                 }
             }
 
     }
 
     public void setMoving(int index, int player, int field) {
-        this.movingField = field;
-        this.movingIndex = index;
+        this.startIndex = field;
+        this.jumpIndex = index;
         this.movingPlayer = player;
     }
 
     public void move( int player,int jumpTo, int currentField) {
         fields.get(jumpTo).setPlayer(player);
-        fields.get(currentField).player = 0;
+        fields.get(currentField).setPlayer(0);
         currentFieldNr = -1;
         hideMoves();
         updateCircles();
-        moved=true;
+
     }
+
 
     private void showMoves() {
         for (Circle c: circles) {
             double moveDist = calculateDist(circles.get(1),circles.get(2));
-            if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).player == 0)
+            if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).getPlayer() == 0)
                 c.setStroke(Color.ORANGERED);
         }
     }
@@ -101,13 +107,12 @@ public class Board {
     private void hideMoves() {
         for (Circle c: circles) {
             c.setStroke(Color.BLACK);
-
         }
     }
 
     public void updateCircles() {
         for(Circle c : circles) {
-            c.setFill(getPlayerColor(fields.get(circles.indexOf(c)).player));
+            c.setFill(getPlayerColor(fields.get(circles.indexOf(c)).getPlayer()));
         }
     }
 
@@ -135,4 +140,6 @@ public class Board {
         double yDis = c1.getCenterY()-c2.getCenterY();
         return Math.sqrt(xDis*xDis + yDis*yDis);
     }
+
+
 }
