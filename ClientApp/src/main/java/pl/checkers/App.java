@@ -18,8 +18,6 @@ import java.util.Collection;
 public class App extends Application {
 
     private ArrayList<Button> buttons = new ArrayList<>();
-    private Text serverLog = new Text();
-    private Text playerInfo = new Text();
     public Game game;
 
     Stage gameStage;

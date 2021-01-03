@@ -56,7 +56,7 @@ public class Server extends Thread {
                     out.writeInt(player);
 
                     /** TUTAJ wysyla ilosc graczy **/
-                    out.writeInt(number);
+                    //out.writeInt(number);
 
                     Player p= new Player(socket,in,out, player);
                     players.add(p);

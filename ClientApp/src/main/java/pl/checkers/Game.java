@@ -1,6 +1,8 @@
 package pl.checkers;
 
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,6 +16,8 @@ public class Game extends Thread {
     Socket socket;
     DataOutputStream toServer;
     DataInputStream fromServer;
+    Text playerInfo ;
+    Text serverInfo ;
 
 
     Game() throws IOException {
@@ -21,6 +25,8 @@ public class Game extends Thread {
         toServer = new DataOutputStream(socket.getOutputStream());
         fromServer = new DataInputStream(socket.getInputStream());
         board = new Board();
+        playerInfo = new Text();
+        serverInfo = new Text();
         initServerMessage();
         start();
     }
@@ -37,7 +43,7 @@ public class Game extends Thread {
                 playerTurn = fromServer.readInt();
                 System.out.println("juz wiem! "+playerTurn);
                 /**TUTAJ przyjmuje ilu jest graczy **/
-                boardSize=fromServer.readInt();
+                //boardSize=fromServer.readInt();
                 setTurn(playerTurn);
                 if(!board.yourTurn){
 
@@ -53,6 +59,7 @@ public class Game extends Thread {
                 }
                 else  {
                     System.out.println("wysylanie");
+                    serverInfo.setText("Your Turn");
                     INNER: while (true){
 
                         System.out.printf("");
@@ -60,6 +67,7 @@ public class Game extends Thread {
                             toServer.writeUTF(board.movingIndex+" "+board.movingField);
                             System.out.println(board.movingPlayer+" "+board.movingIndex+" "+board.movingField);
                             System.out.println("DONE");
+                            serverInfo.setText("Not Your Turn");
                             break INNER;
                         }
                     }
@@ -78,6 +86,7 @@ public class Game extends Thread {
         int intFromServer = fromServer.readInt();
         System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
         board.currentPlayer = intFromServer;
+        playerInfo.setText("Player" + intFromServer);
 
     }
 
