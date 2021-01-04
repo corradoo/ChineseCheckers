@@ -90,9 +90,9 @@ public class Server extends Thread {
 
     public class SessionHandler extends Thread{
 
-        int playersCount;
-        int[] playersTurn;
-        int index=0;
+        int playersCount; //Ilośc graczy
+        int[] playersTurn; //Lista graczy którzy dalej grają w kolejności
+        int movingPlayerIndex=0;
 
         public void init(){
             playersCount=players.size();
@@ -128,14 +128,14 @@ public class Server extends Thread {
                     }
                 }
                 for(Player player: players){
-                    if(player.playerID== playersTurn[index]){
-                        index++;
-                        index=index%playersCount;
-                        int next = playersTurn[index];
+                    if(player.playerID== playersTurn[movingPlayerIndex]){
+                        movingPlayerIndex++;
+                        movingPlayerIndex=movingPlayerIndex%playersCount;
+                        int next = playersTurn[movingPlayerIndex];
                         if(next==0){
-                            index++;
-                            index=index%playersCount;
-                            next= playersTurn[index];
+                            movingPlayerIndex++;
+                            movingPlayerIndex=movingPlayerIndex%playersCount;
+                            next= playersTurn[movingPlayerIndex];
                         }
                         validMove = false;
                         while(!validMove) {
