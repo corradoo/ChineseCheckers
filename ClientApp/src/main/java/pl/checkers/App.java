@@ -58,7 +58,8 @@ public class App extends Application {
         game.playerInfo.setLayoutX(50);
         game.playerInfo.setLayoutY(50);
 
-        overlay.getChildren().addAll(game.serverInfo,game.playerInfo);
+
+        overlay.getChildren().addAll(game.serverInfo,game.playerInfo,game.skipButton);
         overlay.getChildren().addAll(game.getBoard());
 
         root.getChildren().addAll(overlay,t);
