@@ -10,7 +10,7 @@ public class ServerBoard {
     double jumpDist = 30;
     ArrayList<Integer> players = new ArrayList<>();
 
-    boolean jumped;
+    boolean jumped = false;
     int prevIndex;
     int movingIndex;
 
@@ -58,6 +58,7 @@ public class ServerBoard {
             move(start,end);
             movingIndex = end;
             prevIndex = start;
+            jumped = true;
             return true;
         }
         return false;
@@ -166,7 +167,7 @@ public class ServerBoard {
         int start = Integer.parseInt(arr[1]);
         int end = Integer.parseInt(arr[0]);
 
-        if(jumpable(start,end)) {
+        if(jumpable(start,end) && end != prevIndex) {
             move(start,end);
             movingIndex = end;
             prevIndex = start;
@@ -182,7 +183,7 @@ public class ServerBoard {
         for(Field f : fields) {
             //Jeżeli ma sąsiada który jest pionkiem
             if(calculateDist(fields.indexOf(f), movingIndex) <= jumpDist && f.getPlayer() != 0) {
-                x = f.getX() * 2.0 - fields.get(movingIndex).getX();
+                x = f.getX() + f.getX() - fields.get(movingIndex).getX();
                 y = f.getY() * 2.0 - fields.get(movingIndex).getY();
                 //Jeżeli ma, szukamy czy można przez niego skoczyć
                 for(Field f2 : fields) {
@@ -190,7 +191,6 @@ public class ServerBoard {
                         return true;
                     }
                 }
-                break;
             }
         }
         return false;

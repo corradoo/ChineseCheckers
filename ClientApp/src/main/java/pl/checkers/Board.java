@@ -21,11 +21,13 @@ public class Board {
     boolean yourTurn = false;
     int size;
 
-    boolean moved=false;
+    boolean moved = false;
+    boolean jump = false;
 
     int startIndex;
     int movingPlayer;
     int jumpIndex;
+    int prev;
 
     public Board(int size,Game game) {
         this.game = game;
@@ -82,12 +84,13 @@ public class Board {
                 double fX = c.getCenterX()/scale;
                 double fY = c.getCenterY()/scale;
 
-                if( fX == f.x && fY == f.y && f.getPlayer() == currentPlayer && yourTurn) {
+                //Zaznaczenie pionka do poruszenia
+                if( fX == f.x && fY == f.y && f.getPlayer() == currentPlayer && yourTurn && !jump) {
                     currentFieldNr = fields.indexOf(f);
                     showMoves();
                 }
+                //Wybranie pola docelowego
                 if(currentFieldNr >= 0 && fX == f.x && fY == f.y && f.getPlayer() == 0 && yourTurn){
-
                     setMoving(fields.indexOf(f), currentPlayer, currentFieldNr);
                     game.requestMove();
                     game.unlock();
@@ -105,26 +108,27 @@ public class Board {
     public void move( int player,int jumpTo, int currentField) {
         fields.get(jumpTo).setPlayer(player);
         fields.get(currentField).setPlayer(0);
+        prev = currentField;
         currentFieldNr = -1;
         hideMoves();
         updateCircles();
+        circles.get(prev).setFill(Color.rgb(20,0,0));
 
     }
 
 
-    private void showMoves() {
+    public void showMoves() {
         hideMoves();
         double moveDist = calculateDist(circles.get(1),circles.get(2));
         for (Circle c: circles) {
 
-            if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).getPlayer() == 0) {
+            if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).getPlayer() == 0 && !jump) {
                 c.setStroke(Color.ORANGERED);
             }
             if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).getPlayer() != 0) {
                 showJumps(circles.get(currentFieldNr),c);
             }
         }
-
     }
 
     private void showJumps(Circle main, Circle ch) {
@@ -134,7 +138,7 @@ public class Board {
 
         for(Circle c: circles) {
             if(c.getCenterX() - ch.getCenterX() == xDis && c.getCenterY() - ch.getCenterY() == yDis &&
-                    fields.get(circles.indexOf(c)).getPlayer() == 0) {
+                    fields.get(circles.indexOf(c)).getPlayer() == 0 && circles.indexOf(c) != prev) {
                 c.setStroke(Color.DARKCYAN);
             }
         }
