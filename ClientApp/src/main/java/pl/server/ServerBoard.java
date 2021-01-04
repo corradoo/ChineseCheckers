@@ -10,6 +10,10 @@ public class ServerBoard {
     double jumpDist = 30;
     ArrayList<Integer> players = new ArrayList<>();
 
+    boolean jumped;
+    int prevIndex;
+    int movingIndex;
+
     ServerBoard(int mode) {
         switch (mode) {
             case 2:
@@ -50,9 +54,16 @@ public class ServerBoard {
             move(start,end);
             return true;
         }
+        if(jumpable(start,end)) {
+            move(start,end);
+            movingIndex = end;
+            prevIndex = start;
+            return true;
+        }
         return false;
         //Czy wykonano skok
     }
+
     private void move(int start,int end) {
        fields.get(end).setPlayer(fields.get(start).getPlayer());
        fields.get(start).setPlayer(0);
@@ -130,5 +141,58 @@ public class ServerBoard {
         double xDis = fields.get(f1).getX() - fields.get(f2).getX();
         double yDis = fields.get(f1).getY() - fields.get(f2).getY();
         return Math.sqrt(xDis*xDis + yDis*yDis);
+    }
+
+    /** Sprawdza czy rządany ruch może zostać wykonany jako skok*/
+    private boolean jumpable(int start, int end) {
+        //Jeżeli przekroczono zasięg skoku zwróć fałsz
+        if(calculateDist(start,end) > jumpDist*2.0) return false;
+
+        //Sprawdź czy pomiędzy polem docelowym i poczatkowym znajduje się zajęte pole w połowie drogi
+        double x = (fields.get(start).getX() + fields.get(end).getX())/2.0;
+        double y = (fields.get(start).getY() + fields.get(end).getY())/2.0;
+        for(Field f : fields) {
+            if(f.getX() == x && f.getY() == y && fields.get(end).getPlayer() == 0
+                    && fields.indexOf(f) != prevIndex && f.getPlayer() != 0 ) {
+                jumped = true;
+                return true;
+            }
+        }
+        return false;
+    }
+    /** Sprawdza poprawność ruchu po wykonaniu skoku*/
+    public boolean validateJump(String msg) {
+        String[] arr= msg.split(" ");
+        int start = Integer.parseInt(arr[1]);
+        int end = Integer.parseInt(arr[0]);
+
+        if(jumpable(start,end)) {
+            move(start,end);
+            movingIndex = end;
+            prevIndex = start;
+            return true;
+        }
+        return false;
+    }
+
+    /** Sprawdza czy wykonanie dłigoego skoku jest możliwe*/
+    public boolean nextJumpPossible() {
+        double x;
+        double y;
+        for(Field f : fields) {
+            //Jeżeli ma sąsiada który jest pionkiem
+            if(calculateDist(fields.indexOf(f), movingIndex) <= jumpDist && f.getPlayer() != 0) {
+                x = f.getX() * 2.0 - fields.get(movingIndex).getX();
+                y = f.getY() * 2.0 - fields.get(movingIndex).getY();
+                //Jeżeli ma, szukamy czy można przez niego skoczyć
+                for(Field f2 : fields) {
+                    if(x == f2.getX() && y == f2.getY() && f2.getPlayer() == 0 && fields.indexOf(f2) != prevIndex) {
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+        return false;
     }
 }
