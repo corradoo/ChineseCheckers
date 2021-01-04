@@ -8,7 +8,7 @@ public class ServerBoard {
     ConcreteBoard concrete;
     ArrayList<Field> fields;
     double jumpDist = 30;
-    ArrayList<Integer> players;
+    ArrayList<Integer> players = new ArrayList<>();
 
     ServerBoard(int mode) {
         switch (mode) {
@@ -29,6 +29,14 @@ public class ServerBoard {
         for(int i=1; i<=6; i++){
             players.add(i);
         }
+        fields.get(0).setPlayer(1);
+        fields.get(62).setPlayer(0);
+
+        fields.get(60).setPlayer(2);
+        fields.get(72).setPlayer(0);
+
+        fields.get(59).setPlayer(3);
+        fields.get(86).setPlayer(0);
     }
 
     public boolean validateMove(String msg) {
@@ -60,7 +68,7 @@ public class ServerBoard {
                         c1++;
                         if(c1==10) {
                             player=1;
-                            players.remove(0);
+                            players.set(0,0);
                         }
                     }
                 }
@@ -69,7 +77,7 @@ public class ServerBoard {
                         c2++;
                         if(c2==10) {
                             player=2;
-                            players.remove(1);
+                            players.set(1,0);
                         }
                     }
                 }
@@ -78,7 +86,7 @@ public class ServerBoard {
                         c3++;
                         if(c3==10) {
                             player=3;
-                            players.remove(2);
+                            players.set(2,0);
                         }
                     }
                 }
@@ -87,7 +95,7 @@ public class ServerBoard {
                         c4++;
                         if(c4==10) {
                             player=4;
-                            players.remove(3);
+                            players.set(3,0);
                         }
                     }
                 }
@@ -96,7 +104,7 @@ public class ServerBoard {
                         c5++;
                         if(c5==10) {
                             player=5;
-                            players.remove(4);
+                            players.set(4,0);
                         }
                     }
                 }
@@ -105,7 +113,7 @@ public class ServerBoard {
                         c6++;
                         if(c6==10) {
                             player=6;
-                            players.remove(5);
+                            players.set(5,0);
                         }
                     }
                 }
