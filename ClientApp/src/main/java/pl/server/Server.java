@@ -5,10 +5,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.*;
 
 
@@ -64,7 +62,6 @@ public class Server extends Thread {
                     Player p= new Player(socket,in,out, player);
                     players.add(p);
                     player++;
-                    //System.out.println(player+" | "+ counter+" | "+number);
 
 
                 }
@@ -93,25 +90,17 @@ public class Server extends Thread {
 
     public class SessionHandler extends Thread{
 
-        int[] table= new int[10];
+        int[] playersTurn = new int[10];
         int playersCount;
         int index=0;
-//index%playersCount +1
         public void init(){
             playersCount=players.size();
-            //System.out.println("PC: "+playersCount);
             Random random= new Random();
             int starting= random.nextInt(playersCount)+1;
-            //System.out.println(starting);
-            table[0]=starting;
+            playersTurn[0]=starting;
             for(int i=0; i<playersCount;i++){
-                table[i+1]=((starting+i)%playersCount)+1;
+                playersTurn[i+1]=((starting+i)%playersCount)+1;
             }
-            /*System.out.println("TABLE 0 :"+table[0]);
-            System.out.println("TABLE 1 :"+table[1]);
-            System.out.println("TABLE 2 :"+table[2]);
-
-             */
 
             try{
                 for(Player player: players){
@@ -132,19 +121,19 @@ public class Server extends Thread {
             while (true){
                 int winner=serverBoard.getWinner();
                 if(winner!=0){
-                    for(int i=0; i<table.length; i++){
-                        if(winner==table[i]) table[i]=0;
+                    for(int i = 0; i< playersTurn.length; i++){
+                        if(winner== playersTurn[i]) playersTurn[i]=0;
                     }
                 }
                 for(Player player: players){
-                    if(player.playerID==table[index]){
+                    if(player.playerID== playersTurn[index]){
                         index++;
                         index=index%playersCount;
-                        int next = table[index];
+                        int next = playersTurn[index];
                         if(next==0){
                             index++;
                             index=index%playersCount;
-                            next=table[index];
+                            next= playersTurn[index];
                         }
                         validMove = false;
                         while(!validMove) {
