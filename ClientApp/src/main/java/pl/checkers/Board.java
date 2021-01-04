@@ -61,10 +61,6 @@ public class Board {
 
     }
 
-    private void skipMove() {
-        game.unlock();
-    }
-
     private void makeCircles() {
         for(Field f : fields) {
             Circle c = new Circle(f.x*scale,f.y*scale,radius*scale);
@@ -123,6 +119,8 @@ public class Board {
 
             if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).getPlayer() == 0) {
                 c.setStroke(Color.ORANGERED);
+            }
+            if(calculateDist(c,circles.get(currentFieldNr)) <= moveDist && fields.get(circles.indexOf(c)).getPlayer() != 0) {
                 showJumps(circles.get(currentFieldNr),c);
             }
         }
@@ -135,7 +133,8 @@ public class Board {
         double yDis = ch.getCenterY() - main.getCenterY() ;
 
         for(Circle c: circles) {
-            if(c.getCenterX() - ch.getCenterX() == xDis && c.getCenterY() - ch.getCenterY() == yDis) {
+            if(c.getCenterX() - ch.getCenterX() == xDis && c.getCenterY() - ch.getCenterY() == yDis &&
+                    fields.get(circles.indexOf(c)).getPlayer() == 0) {
                 c.setStroke(Color.DARKCYAN);
             }
         }
