@@ -35,7 +35,7 @@ public class ServerBoard {
         fields.get(60).setPlayer(2);
         fields.get(72).setPlayer(0);
 
-        fields.get(52).setPlayer(3);
+        fields.get(35).setPlayer(3);
         fields.get(86).setPlayer(0);
     }
 

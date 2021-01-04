@@ -1,9 +1,11 @@
 package pl.checkers;
 
+import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import pl.checkers.builders.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Board {
@@ -24,9 +26,6 @@ public class Board {
     int startIndex;
     int movingPlayer;
     int jumpIndex;
-
-    public Object locker;
-
 
     public Board(int size,Game game) {
         this.game = game;
@@ -54,7 +53,7 @@ public class Board {
         fields.get(60).setPlayer(2);
         fields.get(72).setPlayer(0);
 
-        fields.get(52).setPlayer(3);
+        fields.get(35).setPlayer(3);
         fields.get(86).setPlayer(0);
 
 
@@ -62,17 +61,27 @@ public class Board {
 
     }
 
+    private void skipMove() {
+        game.unlock();
+    }
+
     private void makeCircles() {
         for(Field f : fields) {
             Circle c = new Circle(f.x*scale,f.y*scale,radius*scale);
             c.setFill(getPlayerColor(f.getPlayer()));
             c.setStroke(Color.BLACK);
-            c.setOnMouseClicked((e -> handleMouseClick(c)));
+            c.setOnMouseClicked((e -> {
+                try {
+                    handleMouseClick(c);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }));
             circles.add(c);
         }
     }
 
-    private void handleMouseClick(Circle c) {
+    private void handleMouseClick(Circle c) throws IOException {
             for(Field f: fields) {
                 double fX = c.getCenterX()/scale;
                 double fY = c.getCenterY()/scale;
@@ -84,7 +93,7 @@ public class Board {
                 if(currentFieldNr >= 0 && fX == f.x && fY == f.y && f.getPlayer() == 0 && yourTurn){
 
                     setMoving(fields.indexOf(f), currentPlayer, currentFieldNr);
-                   // move(currentPlayer,fields.indexOf(f), currentFieldNr);
+                    game.requestMove();
                     game.unlock();
                 }
             }

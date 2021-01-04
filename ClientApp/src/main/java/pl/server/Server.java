@@ -115,33 +115,34 @@ public class Server extends Thread {
             boolean validMove;
             init();
             while (true){
-
-
-                for(int i=0; i<playersCount; i++){
-                    System.out.println("TABLE "+i+" | "+playersTurn[i]);
-                }
-                System.out.println("---------------------------");
-
                 for(Player player: players){
-
                     if(player.playerID== playersTurn[movingPlayerIndex]){
-                        System.out.println("PO IF");
                         System.out.println("TURN: "+playersTurn[movingPlayerIndex]);
+                        //Ustawia gracz który się porusza
                         int next=setMovingPlayer();
+
                         if(next==0){
                             while(next==0){
                                 next=setMovingPlayer();
                             }
-                            System.out.println("PO NEXT");
-
                         }
                         validMove = false;
                         while(!validMove) {
                             player.getMessage();
                             String msg = player.fromServer;
-                            if (serverBoard.validateMove(msg)) {
+                            //Jeżeli gracz pominął kolejkę wyślij msg o pominięciu
+                            if(msg.equals("skip")) {
+                                validMove = true; //Pominięcie jest poprawnym ruchem
+                                System.out.println("Player " + playersTurn[movingPlayerIndex] + " skipped move");
+                                player.sendMessage("skip");
+                                for (Player p : players) {
+                                    p.sendMessage(msg);
+                                }
+                            }
+                            //Sprawdź poprawnośc ruchu
+                            else if (serverBoard.validateMove(msg)) {
                                 validMove = true;
-                                player.sendMessage("ok");
+                                player.sendMessage("correctMove");
                                 for (Player p : players) {
                                     p.sendMessage(msg);
                                 }
@@ -170,7 +171,10 @@ public class Server extends Thread {
             int winner=serverBoard.getWinner();
             if(winner!=0){
                 for(int i = 0; i< playersTurn.length; i++){
-                    if(winner== playersTurn[i]) playersTurn[i]=0;
+                    if(winner == playersTurn[i]) {
+                        playersTurn[i]=0;
+                        System.out.println("Player " + i + " has finished");
+                    }
                 }
             }
         }
