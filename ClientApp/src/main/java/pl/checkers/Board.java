@@ -47,6 +47,17 @@ public class Board {
                 break;
         }
         fields = concrete.getFields();
+
+        fields.get(0).setPlayer(1);
+        fields.get(62).setPlayer(0);
+
+        fields.get(60).setPlayer(2);
+        fields.get(72).setPlayer(0);
+
+        fields.get(59).setPlayer(3);
+        fields.get(86).setPlayer(0);
+
+
         makeCircles();
 
     }

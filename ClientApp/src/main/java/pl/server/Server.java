@@ -90,15 +90,17 @@ public class Server extends Thread {
 
     public class SessionHandler extends Thread{
 
-        int[] playersTurn = new int[10];
         int playersCount;
+        int[] playersTurn;
         int index=0;
+
         public void init(){
             playersCount=players.size();
+            playersTurn = new int[playersCount];
             Random random= new Random();
             int starting= random.nextInt(playersCount)+1;
             playersTurn[0]=starting;
-            for(int i=0; i<playersCount;i++){
+            for(int i=0; i<playersCount-1;i++){
                 playersTurn[i+1]=((starting+i)%playersCount)+1;
             }
 
@@ -116,7 +118,7 @@ public class Server extends Thread {
 
         @Override
         public void run() {
-            boolean validMove = false;
+            boolean validMove;
             init();
             while (true){
                 int winner=serverBoard.getWinner();
