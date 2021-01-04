@@ -13,7 +13,7 @@ import java.util.*;
 public class Server extends Thread {
 
     ServerSocket serverSocket;
-    private ArrayList<Player> players= new ArrayList<>();
+    private ArrayList<Player> players;
     ServerBoard serverBoard;
 
 
@@ -33,6 +33,7 @@ public class Server extends Thread {
             System.out.println("Nieprawidlowa ilosc graczy, prosze podac liczbe z zakresu [1,6]");
             number=scanner.nextInt();
         }
+        players= new ArrayList<>(number);
         System.out.println("Ilosc graczy: "+number);
         serverBoard = new ServerBoard(number);
 
@@ -103,15 +104,8 @@ public class Server extends Thread {
             for(int i=0; i<playersCount-1;i++){
                 playersTurn[i+1]=((starting+i)%playersCount)+1;
             }
+            writeStartingPlayer(starting);
 
-            try{
-                for(Player player: players){
-                    player.outputStream.writeInt(starting);
-                }
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
         }
 
 
@@ -121,21 +115,25 @@ public class Server extends Thread {
             boolean validMove;
             init();
             while (true){
-                int winner=serverBoard.getWinner();
-                if(winner!=0){
-                    for(int i = 0; i< playersTurn.length; i++){
-                        if(winner== playersTurn[i]) playersTurn[i]=0;
-                    }
+
+
+                for(int i=0; i<playersCount; i++){
+                    System.out.println("TABLE "+i+" | "+playersTurn[i]);
                 }
+                System.out.println("---------------------------");
+
                 for(Player player: players){
+
                     if(player.playerID== playersTurn[movingPlayerIndex]){
-                        movingPlayerIndex++;
-                        movingPlayerIndex=movingPlayerIndex%playersCount;
-                        int next = playersTurn[movingPlayerIndex];
+                        System.out.println("PO IF");
+                        System.out.println("TURN: "+playersTurn[movingPlayerIndex]);
+                        int next=setMovingPlayer();
                         if(next==0){
-                            movingPlayerIndex++;
-                            movingPlayerIndex=movingPlayerIndex%playersCount;
-                            next= playersTurn[movingPlayerIndex];
+                            while(next==0){
+                                next=setMovingPlayer();
+                            }
+                            System.out.println("PO NEXT");
+
                         }
                         validMove = false;
                         while(!validMove) {
@@ -151,18 +149,56 @@ public class Server extends Thread {
                                 player.sendMessage("err");
                             }
                         }
-                        for(Player p: players){
-                            try {
-                                p.outputStream.writeInt(next);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        sendMessageInt(next);
+                        checkWinner();
                     }
                 }
             }
         }
+
+        public void sendMessageInt(int next){
+            for(Player p: players){
+                try {
+                    p.outputStream.writeInt(next);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void checkWinner(){
+            int winner=serverBoard.getWinner();
+            if(winner!=0){
+                for(int i = 0; i< playersTurn.length; i++){
+                    if(winner== playersTurn[i]) playersTurn[i]=0;
+                }
+            }
+        }
+
+        public int setMovingPlayer(){
+            movingPlayerIndex++;
+            movingPlayerIndex=movingPlayerIndex%playersCount;
+            return playersTurn[movingPlayerIndex];
+        }
+
+        public void writeStartingPlayer(int starting){
+            try{
+                for(Player player: players){
+                    player.outputStream.writeInt(starting);
+                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
+
+
+
     }
+
+
 }
 
 
