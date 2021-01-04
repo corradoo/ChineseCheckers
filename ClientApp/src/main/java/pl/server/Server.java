@@ -64,17 +64,12 @@ public class Server extends Thread {
                     players.add(p);
                     player++;
 
-
                 }
                 catch (IOException e) {
                     e.printStackTrace();
                     break;
                 }
-
             }
-
-
-
         }
     }
     public static void main(String[] args){
@@ -94,6 +89,7 @@ public class Server extends Thread {
         int playersCount; //Ilośc graczy
         int[] playersTurn; //Lista graczy którzy dalej grają w kolejności
         int movingPlayerIndex=0;
+        int current;
 
         public void init(){
             playersCount=players.size();
@@ -104,21 +100,20 @@ public class Server extends Thread {
             for(int i=0; i<playersCount-1;i++){
                 playersTurn[i+1]=((starting+i)%playersCount)+1;
             }
+            current = starting;
             writeStartingPlayer(starting);
-
         }
-
-
 
         @Override
         public void run() {
             boolean validMove;
+
             init();
             while (true){
                 for(Player player: players){
                     if(player.playerID== playersTurn[movingPlayerIndex]){
                         System.out.println("TURN: "+playersTurn[movingPlayerIndex]);
-                        //Ustawia gracz który się porusza
+                        //Ustawia gracza który się porusza
                         int next=setMovingPlayer();
 
                         if(next==0){
@@ -127,6 +122,7 @@ public class Server extends Thread {
                             }
                         }
                         validMove = false;
+                        serverBoard.jumped = false;
                         while(!validMove) {
                             player.getMessage();
                             String msg = player.fromServer;
@@ -141,22 +137,59 @@ public class Server extends Thread {
                             }
                             //Sprawdź poprawnośc ruchu
                             else if (serverBoard.validateMove(msg)) {
+                                System.out.println("Validating move...");
                                 validMove = true;
-                                player.sendMessage("correctMove");
+                                if(serverBoard.jumped) {
+                                    player.sendMessage("jumped");
+                                } else {
+                                    player.sendMessage("correctMove");
+                                }
                                 for (Player p : players) {
                                     p.sendMessage(msg);
+                                }
+                                //Tryb skoków
+                                if(serverBoard.jumped && serverBoard.nextJumpPossible()) {
+                                    //Dopóki jest możliwy kolejny skok
+                                    sendMessageInt(current);
+                                    while(serverBoard.nextJumpPossible()) {
+                                        player.getMessage();
+                                        String nextMsg = player.fromServer;
+                                        if(nextMsg.equals("skip")) {
+                                            System.out.println("Player " + playersTurn[movingPlayerIndex] + " skipped move");
+                                            player.sendMessage("skip");
+                                            for (Player p : players) {
+                                                p.sendMessage(nextMsg);
+                                            }
+                                            break;
+                                        }
+
+                                        //Sprawdza poprawność skoku
+                                        System.out.println("Validating jump move...");
+                                        if(serverBoard.validateJump(nextMsg)) {
+                                            System.out.println("Correct jump move");
+                                            player.sendMessage("jumped");
+                                            for (Player p : players) {
+                                                p.sendMessage(nextMsg);
+                                            }
+                                            if(serverBoard.nextJumpPossible()) sendMessageInt(current);
+                                        } else {
+                                            System.out.println("Incorrect jump move");
+                                            player.sendMessage("err");
+                                        }
+                                    }
                                 }
                             } else {
                                 player.sendMessage("err");
                             }
                         }
+                        current = next;
                         sendMessageInt(next);
                         checkWinner();
                     }
                 }
             }
         }
-
+        /** Wysyła wiadomośc o kolejce do wszystkich graczy*/
         public void sendMessageInt(int next){
             for(Player p: players){
                 try {
@@ -173,7 +206,7 @@ public class Server extends Thread {
                 for(int i = 0; i< playersTurn.length; i++){
                     if(winner == playersTurn[i]) {
                         playersTurn[i]=0;
-                        System.out.println("Player " + i + " has finished");
+                        System.out.println("Player " + current + " has finished");
                     }
                 }
             }

@@ -59,8 +59,11 @@ public class Game extends Thread {
     /** Dekoduje wiadomość od serwera*/
     private void decodeResponseFromServer() throws IOException {
         String string = fromServer.readUTF();
+
+        //Jeżeli ktoś pominął, nie rób nic
         if(string.equals("skip")) return;
 
+        //Jeżeli ruch, zdekoduj i wykonaj na planszy
         String[] arr= string.split(" ");
         int index= Integer.parseInt(arr[0]);
         int currentField=Integer.parseInt(arr[1]);
@@ -76,8 +79,8 @@ public class Game extends Thread {
 
             try {
                 System.out.println("Czekam na kolejke");
-                //Odbiera wiadomość od serwera czyja jest kolej
 
+                //Odbiera wiadomość od serwera czyja jest kolej
                 playerTurn = fromServer.readInt();
                 System.out.println("juz wiem! " + playerTurn);
 
@@ -86,25 +89,37 @@ public class Game extends Thread {
 
                 //Jeżeli nie jest kolej tego klienta nasłuchuje ruchu
                 if(!board.yourTurn){
+                    skipButton.setDisable(true);
+                    board.jump = false;
                     System.out.println("Not your turn");
+                    serverInfo.setText("Not Your Turn");
                     decodeResponseFromServer();
                 }
 
-                //W przeciwnym wypadku może wysłać kolejny ruch lub pominąc kolejke
+                //W przeciwnym wypadku może wysłać ruch lub pominąc kolejke
                 else {
                     skipButton.setDisable(false);
+                    if(board.jump) serverInfo.setText("Jumping mode");
+                    else serverInfo.setText("Your Turn");
                     while(true) {
                         System.out.println("wysylanie");
-                        serverInfo.setText("Your Turn");
+
                         lock();
                         String feedbackFromServer = fromServer.readUTF();
-                        if(feedbackFromServer.equals("correctMove") || feedbackFromServer.equals("skip")) {
+                        if(feedbackFromServer.equals("correctMove") || feedbackFromServer.equals("skip") ) {
                             decodeResponseFromServer();
                             skipButton.setDisable(true);
                             break;
                         }
+                        if(feedbackFromServer.equals("jumped")) {
+                            board.jump = true;
+                            decodeResponseFromServer();
+                            board.currentFieldNr = board.jumpIndex;
+                            board.showMoves();
+                            break;
+                        }
                     }
-                    serverInfo.setText("Not Your Turn");
+
                 }
 
             } catch (IOException | InterruptedException e) {
