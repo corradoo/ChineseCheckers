@@ -90,6 +90,9 @@ public class Server extends Thread {
         int[] playersTurn; //Lista graczy którzy dalej grają w kolejności
         int movingPlayerIndex=0;
         int current;
+        int winner=0;
+        int numberOfWinners=0;
+        boolean gameOver=false;
 
         public void init(){
             playersCount=players.size();
@@ -110,6 +113,17 @@ public class Server extends Thread {
 
             init();
             while (true){
+
+                if(gameOver){
+                    try{
+                        serverSocket.close();
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+
                 for(Player player: players){
                     if(player.playerID== playersTurn[movingPlayerIndex]){
                         System.out.println("TURN: "+playersTurn[movingPlayerIndex]);
@@ -123,6 +137,7 @@ public class Server extends Thread {
                         }
                         validMove = false;
                         serverBoard.jumped = false;
+
                         while(!validMove) {
                             player.getMessage();
                             String msg = player.fromServer;
@@ -131,25 +146,32 @@ public class Server extends Thread {
                                 validMove = true; //Pominięcie jest poprawnym ruchem
                                 System.out.println("Player " + playersTurn[movingPlayerIndex] + " skipped move");
                                 player.sendMessage("skip");
+                                checkWinner();
                                 for (Player p : players) {
                                     p.sendMessage(msg);
+                                    checkWinConditions(p);
                                 }
                             }
                             //Sprawdź poprawnośc ruchu
                             else if (serverBoard.validateMove(msg)) {
                                 System.out.println("Validating move...");
+
                                 validMove = true;
                                 if(serverBoard.jumped) {
                                     player.sendMessage("jumped");
                                 } else {
                                     player.sendMessage("correctMove");
                                 }
+                                checkWinner();
                                 for (Player p : players) {
                                     p.sendMessage(msg);
+                                    checkWinConditions(p);
                                 }
                                 //Tryb skoków
                                 if(serverBoard.jumped && serverBoard.nextJumpPossible()) {
                                     //Dopóki jest możliwy kolejny skok
+
+
                                     sendMessageInt(current);
                                     while(serverBoard.nextJumpPossible()) {
                                         player.getMessage();
@@ -157,8 +179,10 @@ public class Server extends Thread {
                                         if(nextMsg.equals("skip")) {
                                             System.out.println("Player " + playersTurn[movingPlayerIndex] + " skipped move");
                                             player.sendMessage("skip");
+
                                             for (Player p : players) {
                                                 p.sendMessage(nextMsg);
+                                                checkWinConditions(p);
                                             }
                                             break;
                                         }
@@ -168,8 +192,10 @@ public class Server extends Thread {
                                         if(serverBoard.validateJump(nextMsg)) {
                                             System.out.println("Correct jump move");
                                             player.sendMessage("jumped");
+                                            checkWinner();
                                             for (Player p : players) {
                                                 p.sendMessage(nextMsg);
+                                                checkWinConditions(p);
                                             }
                                             if(serverBoard.nextJumpPossible()) sendMessageInt(current);
                                         } else {
@@ -185,6 +211,7 @@ public class Server extends Thread {
                         current = next;
                         sendMessageInt(next);
                         checkWinner();
+
                     }
                 }
             }
@@ -200,13 +227,36 @@ public class Server extends Thread {
             }
         }
 
+
+        public void checkWinConditions(Player p){
+            if(winner!=0){
+                p.sendMessage("winner");
+                p.sendIntMessage(winner);
+                System.out.println("Skonczyl gracz : "+winner);
+            }
+            else{
+                p.sendMessage("nothing");
+            }
+            if(numberOfWinners==playersCount-1){
+                p.sendMessage("KONIEC");
+                System.out.println("KONIEC GRY");
+                gameOver=true;
+            }
+            else{
+                p.sendMessage("DALEJ");
+
+            }
+
+        }
+
         public void checkWinner(){
-            int winner=serverBoard.getWinner();
+            winner=serverBoard.getWinner();
             if(winner!=0){
                 for(int i = 0; i< playersTurn.length; i++){
                     if(winner == playersTurn[i]) {
                         playersTurn[i]=0;
                         System.out.println("Player " + current + " has finished");
+                        numberOfWinners++;
                     }
                 }
             }

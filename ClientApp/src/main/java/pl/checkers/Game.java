@@ -18,6 +18,7 @@ public class Game extends Thread {
     Text serverInfo ;
     Button skipButton = new Button();
     int playerTurn;
+    boolean gameOver=false;
 
     Game() throws IOException {
         socket = new Socket("127.0.0.1", 58000);
@@ -77,6 +78,15 @@ public class Game extends Thread {
 
         while (true) {
 
+            if(gameOver){
+                try{
+                    socket.close();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            }
             try {
                 System.out.println("Czekam na kolejke");
 
@@ -94,6 +104,7 @@ public class Game extends Thread {
                     System.out.println("Not your turn");
                     serverInfo.setText("Not Your Turn");
                     decodeResponseFromServer();
+                    checkWinConditions();
                 }
 
                 //W przeciwnym wypadku może wysłać ruch lub pominąc kolejke
@@ -108,12 +119,14 @@ public class Game extends Thread {
                         String feedbackFromServer = fromServer.readUTF();
                         if(feedbackFromServer.equals("correctMove") || feedbackFromServer.equals("skip") ) {
                             decodeResponseFromServer();
+                            checkWinConditions();
                             skipButton.setDisable(true);
                             break;
                         }
                         if(feedbackFromServer.equals("jumped")) {
                             board.jump = true;
                             decodeResponseFromServer();
+                            checkWinConditions();
                             board.currentFieldNr = board.jumpIndex;
                             board.showMoves();
                             break;
@@ -123,6 +136,26 @@ public class Game extends Thread {
                 }
 
             } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void checkWinConditions() throws IOException {
+        String winnerInfo=fromServer.readUTF();
+        if(winnerInfo.equals("winner")){
+            int winner=fromServer.readInt();
+            System.out.println("Skonczyl gracz nr "+winner);
+            playerInfo.setText("Skonczyl gracz nr "+winner);
+        }
+        String gameOverInfo=fromServer.readUTF();
+        if(gameOverInfo.equals("KONIEC")){
+            gameOver=true;
+            playerInfo.setText("Koniec gry");
+            try{
+                socket.close();
+            }
+            catch (Exception e){
                 e.printStackTrace();
             }
         }

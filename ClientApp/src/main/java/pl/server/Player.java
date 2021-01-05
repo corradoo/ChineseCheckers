@@ -13,6 +13,8 @@ public class Player {
 
     public String fromServer;
     public String toServer;
+    public int fromServerInt;
+    public int toServerInt;
 
     Player(Socket socket, DataInputStream input, DataOutputStream output, int id) {
         this.socket=socket;
@@ -42,6 +44,16 @@ public class Player {
         try{
             toServer=message;
             outputStream.writeUTF(toServer);
+        }
+        catch (Exception e){
+
+        }
+    }
+
+    public void sendIntMessage(int message){
+        try{
+            toServerInt=message;
+            outputStream.writeInt(toServerInt);
         }
         catch (Exception e){
 
