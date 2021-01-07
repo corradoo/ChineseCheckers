@@ -1,12 +1,12 @@
 package pl.checkers;
 
+/**Klasa reprezentująca pole*/
 public class Field {
 
-    int x;
-    int y;
+    private final int x;
+    private final int y;
     private int player;
-    int base;
-    boolean empty = true;
+    private final int base;
 
     public Field(int x, int y, int player,int base) {
         this.x = x;
@@ -15,27 +15,42 @@ public class Field {
         this.base = base;
     }
 
+    /**
+     * Ustawia gracza na danym polu
+     * @param player idgracza
+     */
     public void setPlayer(int player) {
         this.player = player;
-        empty = false;
     }
 
-    public boolean isEmpty() {
-        return empty;
-    }
-
+    /**
+     * Pobiera czyją bazę zawiera pole
+     * @return id bazy
+     */
     public int getBase(){
         return base;
     }
 
+    /**
+     * Pobiera id gracza na danym polu
+     * @return id gracza
+     */
     public int getPlayer() {
         return player;
     }
 
+    /**
+     * Zwraca współrzędną X pola
+     * @return współrzędna X pola
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Zwraca współrzędną Y pola
+     * @return współrzędna Y pola
+     */
     public int getY() {
         return y;
     }

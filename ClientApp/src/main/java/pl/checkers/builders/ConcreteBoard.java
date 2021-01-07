@@ -3,15 +3,18 @@ package pl.checkers.builders;
 import pl.checkers.Field;
 
 import java.util.ArrayList;
-
+/**
+ * Klasa tworząca pola dla standarowego rozmiaru planszy
+ * */
 public abstract class ConcreteBoard implements BoardBuilder {
 
-    private ArrayList<Field> fields = new ArrayList<>();
-    int gapX = 20,gapY = 17;
-    int oddRowX = 10;
+    protected ArrayList<Field> fields = new ArrayList<>();
+    protected static final int gapX = 20,gapY = 17;
+    protected static final int oddRowX = 10;
 
     /**
      * Funkcja tworząca promienie na planszy
+     * dla podstawowego rozmiaru planszy
      */
     public void drawBase( int beginX,int beginY,int h, boolean invert, int player, int base) {
         int endX = beginX;
@@ -55,7 +58,8 @@ public abstract class ConcreteBoard implements BoardBuilder {
     }
 
     /**
-     * Tworzenie planszy bez baz
+     * Implementacja metody tworząca środkową część planszy bez baz
+     * dla podstawowego rozmiaru planszy
      */
     public void drawBoard() {
 
