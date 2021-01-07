@@ -11,16 +11,16 @@ public class ServerBoard {
     ArrayList<Integer> players = new ArrayList<>();
 
     boolean jumped = false;
-    int prevIndex;
-    int movingIndex;
+    public int prevIndex;
+    public int movingIndex;
 
-    ServerBoard(int mode) {
+    public ServerBoard(int mode) {
         switch (mode) {
             case 2:
                 concrete = new BoardTwo();
                 break;
             case 3:
-                concrete = new BoardThree();
+                concrete = new BoardThreeTest();
                 break;
             case 4:
                 concrete = new BoardFour();
@@ -33,14 +33,6 @@ public class ServerBoard {
         for(int i=1; i<=6; i++){
             players.add(i);
         }
-        fields.get(0).setPlayer(1);
-        fields.get(62).setPlayer(0);
-
-        fields.get(60).setPlayer(2);
-        fields.get(72).setPlayer(0);
-
-        fields.get(35).setPlayer(3);
-        fields.get(86).setPlayer(0);
     }
 
     public boolean validateMove(String msg) {
@@ -145,7 +137,7 @@ public class ServerBoard {
     }
 
     /** Sprawdza czy rządany ruch może zostać wykonany jako skok*/
-    private boolean jumpable(int start, int end) {
+    public boolean jumpable(int start, int end) {
         //Jeżeli przekroczono zasięg skoku zwróć fałsz
         if(calculateDist(start,end) > jumpDist*2.0) return false;
 

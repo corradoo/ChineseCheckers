@@ -1,13 +1,14 @@
 package pl.checkers;
 
-import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import pl.checkers.builders.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Klasa odpowiedzialna za logikę ruchów
+ */
 public class Board {
     ConcreteBoard concrete;
     Game game;
@@ -38,7 +39,7 @@ public class Board {
                 concrete = new BoardTwo();
                 break;
             case 3:
-                concrete = new BoardThree();
+                concrete = new BoardThreeTest();
                 break;
             case 4:
                 concrete = new BoardFour();
@@ -48,24 +49,13 @@ public class Board {
                 break;
         }
         fields = concrete.getFields();
-
-        fields.get(0).setPlayer(1);
-        fields.get(62).setPlayer(0);
-
-        fields.get(60).setPlayer(2);
-        fields.get(72).setPlayer(0);
-
-        fields.get(35).setPlayer(3);
-        fields.get(86).setPlayer(0);
-
-
         makeCircles();
-
     }
 
+    /**Funkcja tworząca pionki w GUI*/
     private void makeCircles() {
         for(Field f : fields) {
-            Circle c = new Circle(f.x*scale,f.y*scale,radius*scale);
+            Circle c = new Circle(f.getX()*scale,f.getY()*scale,radius*scale);
             c.setFill(getPlayerColor(f.getPlayer()));
             c.setStroke(Color.BLACK);
             c.setOnMouseClicked((e -> {
@@ -79,18 +69,19 @@ public class Board {
         }
     }
 
+    /**Mouse click handler dla pionków*/
     private void handleMouseClick(Circle c) throws IOException {
             for(Field f: fields) {
                 double fX = c.getCenterX()/scale;
                 double fY = c.getCenterY()/scale;
 
                 //Zaznaczenie pionka do poruszenia
-                if( fX == f.x && fY == f.y && f.getPlayer() == currentPlayer && yourTurn && !jump) {
+                if( fX == f.getX() && fY == f.getY() && f.getPlayer() == currentPlayer && yourTurn && !jump) {
                     currentFieldNr = fields.indexOf(f);
                     showMoves();
                 }
                 //Wybranie pola docelowego
-                if(currentFieldNr >= 0 && fX == f.x && fY == f.y && f.getPlayer() == 0 && yourTurn){
+                if(currentFieldNr >= 0 && fX == f.getX() && fY == f.getY() && f.getPlayer() == 0 && yourTurn){
                     setMoving(fields.indexOf(f), currentPlayer, currentFieldNr);
                     game.requestMove();
                     game.unlock();
@@ -99,12 +90,14 @@ public class Board {
 
     }
 
+    /**Funkcja ustawia parametry do wysłania do serwera*/
     public void setMoving(int index, int player, int field) {
         this.startIndex = field;
         this.jumpIndex = index;
         this.movingPlayer = player;
     }
 
+    /**Funkcja przemieszczająca piony na planszy*/
     public void move( int player,int jumpTo, int currentField) {
         fields.get(jumpTo).setPlayer(player);
         fields.get(currentField).setPlayer(0);
@@ -112,11 +105,10 @@ public class Board {
         currentFieldNr = -1;
         hideMoves();
         updateCircles();
-        circles.get(prev).setFill(Color.rgb(20,0,0));
-
+        circles.get(prev).setFill(Color.rgb(120,0,0));
     }
 
-
+    /**Funkcja pokazująca użytkownikowi dozwolone ruchy*/
     public void showMoves() {
         hideMoves();
         double moveDist = calculateDist(circles.get(1),circles.get(2));
@@ -131,6 +123,7 @@ public class Board {
         }
     }
 
+    /**Funkcja wyświetlająca dozwolone skoki*/
     private void showJumps(Circle main, Circle ch) {
 
         double xDis = ch.getCenterX() - main.getCenterX() ;
@@ -144,18 +137,21 @@ public class Board {
         }
     }
 
+    /**Funkcja do "chowania podpowiedzi" */
     private void hideMoves() {
         for (Circle c: circles) {
             c.setStroke(Color.BLACK);
         }
     }
 
+    /**Funkcja pośrednicząca w wyświetalniu pozycji pionków w GUI*/
     public void updateCircles() {
         for(Circle c : circles) {
             c.setFill(getPlayerColor(fields.get(circles.indexOf(c)).getPlayer()));
         }
     }
 
+    /**Funkcja zwracająca kolor gracza o danym numerze*/
     private Color getPlayerColor(int player) {
         switch(player) {
             case 1:
@@ -175,11 +171,12 @@ public class Board {
         }
     }
 
+    /**Funkcja licząca dystans między dwoma polami
+     * Używana do pokazywania dozwolonych ruchów */
     public double calculateDist(Circle c1, Circle c2) {
         double xDis = c1.getCenterX()-c2.getCenterX();
         double yDis = c1.getCenterY()-c2.getCenterY();
         return Math.sqrt(xDis*xDis + yDis*yDis);
     }
-
 
 }

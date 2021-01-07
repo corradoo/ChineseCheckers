@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**Klasa - wątek klienta komunikujący się z serwerem*/
 public class Game extends Thread {
     Board board;
     Socket socket;
@@ -73,6 +74,7 @@ public class Game extends Thread {
         board.moved=false;
     }
 
+    /**Komunikacja z serwerem*/
     @Override
     public void run() {
 
@@ -141,6 +143,7 @@ public class Game extends Thread {
         }
     }
 
+    /**Funckcja ustawiająca info o końcu gry*/
     public void checkWinConditions() throws IOException {
         String winnerInfo=fromServer.readUTF();
         if(winnerInfo.equals("winner")){
@@ -161,19 +164,23 @@ public class Game extends Thread {
         }
     }
 
-    public synchronized void lock()
-            throws InterruptedException{
+    /**Blokująca unkcja służąca do synchronizacji wysyłania wiadomości*/
+    public synchronized void lock() throws InterruptedException{
         while(!board.moved){
             wait();
         }
         board.moved = false;
     }
 
+    /**Odblokowująca unkcja służąca do synchronizacji wysyłania wiadomości*/
     public synchronized void unlock(){
         board.moved = true;
         notify();
     }
 
+    /**Odbiera pierwszą wiadomość od serwera
+     * oraz ustawia gracza
+     * */
     public void initServerMessage() throws IOException {
         int intFromServer = fromServer.readInt();
         System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
@@ -181,13 +188,12 @@ public class Game extends Thread {
         playerInfo.setText("Player" + intFromServer);
     }
 
-
-
+    /**Ustawia kolejkę obecnego gracza */
     private void setTurn(int currentPlayer) {
         board.yourTurn = board.currentPlayer == currentPlayer;
     }
 
-
+    /**Zwraca pola dla GUI*/
     public ArrayList<Circle> getBoard() {
         return this.board.circles;
     }

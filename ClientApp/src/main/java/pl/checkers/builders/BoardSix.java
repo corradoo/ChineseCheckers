@@ -1,5 +1,8 @@
 package pl.checkers.builders;
-
+/**
+ * Klasa tworząca pola dla standarowego rozmiaru planszy
+ * w trybie dla sześciu graczy
+ * */
 public class BoardSix extends ConcreteBoard {
 
     public BoardSix() {
