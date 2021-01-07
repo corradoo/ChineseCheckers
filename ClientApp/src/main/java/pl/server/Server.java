@@ -23,31 +23,31 @@ public class Server extends Thread {
     }
     public void run() {
         int player = 1;
-        int counter=0;
+        int counter = 0;
         SessionHandler sessionHandler;
         System.out.println("Podaj liczbe graczy");
-        Scanner scanner= new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-        int number= scanner.nextInt();
-        if(number<=0 || number>6){
+        int number = scanner.nextInt();
+        if (number <= 0 || number > 6) {
             System.out.println("Nieprawidlowa ilosc graczy, prosze podac liczbe z zakresu [1,6]");
-            number=scanner.nextInt();
+            number = scanner.nextInt();
         }
-        players= new ArrayList<>(number);
-        System.out.println("Ilosc graczy: "+number);
+        players = new ArrayList<>(number);
+        System.out.println("Ilosc graczy: " + number);
         serverBoard = new ServerBoard(number);
 
         while (true) {
 
 
-            if(player>number&&counter==0){
+            if (player > number && counter == 0) {
                 System.out.println("START");
-                sessionHandler= new SessionHandler();
+                sessionHandler = new SessionHandler();
                 sessionHandler.start();
                 counter++;
             }
 
-            while(player <=number) {
+            while (player <= number) {
                 try {
                     System.out.println("Waiting for clients on port:" + serverSocket.getLocalPort());
                     Socket socket = serverSocket.accept();
@@ -60,19 +60,20 @@ public class Server extends Thread {
                     out.writeInt(player);
 
 
-                    Player p= new Player(socket,in,out, player);
+                    Player p = new Player(socket, in, out, player);
                     players.add(p);
                     player++;
 
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                     break;
                 }
             }
         }
     }
+
     public static void main(String[] args){
+
             Thread server;
             try {
                 server = new Server();

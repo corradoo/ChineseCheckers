@@ -16,7 +16,7 @@ public class Player {
     public int fromServerInt;
     public int toServerInt;
 
-    Player(Socket socket, DataInputStream input, DataOutputStream output, int id) {
+    public Player(Socket socket, DataInputStream input, DataOutputStream output, int id) {
         this.socket=socket;
         this.inputStream=input;
         this.outputStream=output;
