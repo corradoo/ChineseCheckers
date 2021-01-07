@@ -21,7 +21,7 @@ public class Game extends Thread {
     int playerTurn;
     boolean gameOver=false;
 
-    Game() throws IOException {
+    public Game() throws IOException {
         socket = new Socket("127.0.0.1", 58000);
         toServer = new DataOutputStream(socket.getOutputStream());
         fromServer = new DataInputStream(socket.getInputStream());
@@ -40,7 +40,7 @@ public class Game extends Thread {
         int boardSize;
         try {
             boardSize=fromServer.readInt();
-            board = new Board(boardSize, this);
+            board = new Board(boardSize);
             initServerMessage();
         } catch (IOException e) {
             e.printStackTrace();
@@ -186,6 +186,7 @@ public class Game extends Thread {
         System.out.println("Siema tu serwer, jesteś graczem nr:" + intFromServer);
         board.currentPlayer = intFromServer;
         playerInfo.setText("Player" + intFromServer);
+        board.passGame(this);
     }
 
     /**Ustawia kolejkę obecnego gracza */

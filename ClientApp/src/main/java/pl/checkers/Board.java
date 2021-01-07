@@ -30,8 +30,7 @@ public class Board {
     int jumpIndex;
     int prev;
 
-    public Board(int size,Game game) {
-        this.game = game;
+    public Board(int size) {
         this.size = size;
         /* Wzorzec budowniczego */
         switch(size) {
@@ -179,4 +178,11 @@ public class Board {
         return Math.sqrt(xDis*xDis + yDis*yDis);
     }
 
+    public void passGame(Game game) {
+        this.game = game;
+    }
+
+    public void setCurrentFieldNr(int currentFieldNr) {
+        this.currentFieldNr = currentFieldNr;
+    }
 }
