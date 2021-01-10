@@ -30,6 +30,11 @@ public class Board {
     int jumpIndex;
     int prev;
 
+    /**
+     *  Metoda tworząca tablicę dla danej ilości graczy
+     *
+     * @param size Rozmiar tablicy zależny od ilości graczy
+     */
     public Board(int size) {
         this.size = size;
         /* Wzorzec budowniczego */
@@ -178,10 +183,18 @@ public class Board {
         return Math.sqrt(xDis*xDis + yDis*yDis);
     }
 
+    /**
+     * Ustawia obecną grę
+     * @param game
+     */
     public void passGame(Game game) {
         this.game = game;
     }
 
+    /**
+     * Ustawia bieżące pole
+     * @param currentFieldNr
+     */
     public void setCurrentFieldNr(int currentFieldNr) {
         this.currentFieldNr = currentFieldNr;
     }

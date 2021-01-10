@@ -14,6 +14,10 @@ public class ServerBoard {
     public int prevIndex;
     public int movingIndex;
 
+    /**
+     * Ustawia tryb gry w zależnosci od ilości graczy
+     * @param mode Ilość graczy
+     */
     public ServerBoard(int mode) {
         switch (mode) {
             case 2:
@@ -35,6 +39,11 @@ public class ServerBoard {
         }
     }
 
+    /**
+     * Przetwarza wiadomość od klienta i sprawdza czy wykonany ruch jest poprawny
+     * @param msg Wiadomość o ruchu od klienta
+     * @return Zwraca czy ruch jest poprawny czy nie
+     */
     public boolean validateMove(String msg) {
         String[] arr= msg.split(" ");
         int start = Integer.parseInt(arr[1]);
@@ -57,11 +66,20 @@ public class ServerBoard {
         //Czy wykonano skok
     }
 
+    /**
+     * Wykonuje ruch na tablicy serwerowej
+     * @param start Lokacja startowa
+     * @param end Lokacja końcowa
+     */
     private void move(int start,int end) {
        fields.get(end).setPlayer(fields.get(start).getPlayer());
        fields.get(start).setPlayer(0);
     }
 
+    /**
+     * Sprawdza czy któryś zawodnik już skończył grę
+     * @return Zwraca ID zwycięzcy lub 0 jeśli nikt jeszcze nie wygrał
+     */
     public int getWinner() {
         int player=0;
         int c1 = 0,c2=0,c3=0,c4=0,c5=0,c6=0;
@@ -129,7 +147,12 @@ public class ServerBoard {
         return player;
     }
 
-
+    /**
+     * Oblicza dystans między dwoma polami
+     * @param f1 Pole startowe
+     * @param f2 Pole końcowe
+     * @return Zwraca dystans między polami
+     */
     public double calculateDist(int f1, int f2) {
         double xDis = fields.get(f1).getX() - fields.get(f2).getX();
         double yDis = fields.get(f1).getY() - fields.get(f2).getY();

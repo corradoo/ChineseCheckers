@@ -16,6 +16,14 @@ public class Player {
     public int fromServerInt;
     public int toServerInt;
 
+    /**
+     * Konstruktor tworzący nowego gracza
+     *
+     * @param socket Socket danego gracza
+     * @param input Strumień wejścia danego gracza
+     * @param output Strumień wyjścia danego gracza
+     * @param id Numer danego gracza
+     */
     public Player(Socket socket, DataInputStream input, DataOutputStream output, int id) {
         this.socket=socket;
         this.inputStream=input;
@@ -24,8 +32,9 @@ public class Player {
     }
 
 
-
-
+    /**
+     * Pobiera wiadomość ze strumienia wejścia
+     */
     public void getMessage(){
         while(true){
             try{
@@ -39,7 +48,10 @@ public class Player {
 
     }
 
-
+    /**
+     * Wysyła wiadomość na strumień wyjścia
+     * @param message Wiadomość w formacie UTF
+     */
     public void sendMessage(String message){
         try{
             toServer=message;
@@ -50,6 +62,10 @@ public class Player {
         }
     }
 
+    /**
+     * Wysyła wiadomość na strumień wyjścia
+     * @param message Wiadomość w formacie INT
+     */
     public void sendIntMessage(int message){
         try{
             toServerInt=message;

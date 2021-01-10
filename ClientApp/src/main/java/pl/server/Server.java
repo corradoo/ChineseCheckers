@@ -16,11 +16,18 @@ public class Server extends Thread {
     private ArrayList<Player> players;
     ServerBoard serverBoard;
 
-
+    /**
+     * Ustawia socket serwera
+     * @throws IOException
+     */
     public Server() throws IOException {
         serverSocket = new ServerSocket(58000);
 
     }
+
+    /**
+     * Dodaje nowych graczy do ArrayList i tworzy obiekty klasy Player
+     */
     public void run() {
         int player = 1;
         int counter = 0;
@@ -95,6 +102,9 @@ public class Server extends Thread {
         int numberOfWinners=0;
         boolean gameOver=false;
 
+        /**
+         * Funkcje wywoływane przy tworzeniu nowej instancji SessionHandler
+         */
         public void init(){
             playersCount=players.size();
             playersTurn = new int[playersCount];
@@ -228,7 +238,10 @@ public class Server extends Thread {
             }
         }
 
-
+        /**
+         * Sprawdza warunki zwycięstwa i warunek końca gry
+         * @param p Gracz do którego wysyła wiadomość po sprawdzeniu warunków
+         */
         public void checkWinConditions(Player p){
             if(winner!=0){
                 p.sendMessage("winner");
@@ -250,6 +263,9 @@ public class Server extends Thread {
 
         }
 
+        /**
+         * Sprawdza czy ktoś już skończył grę
+         */
         public void checkWinner(){
             winner=serverBoard.getWinner();
             if(winner!=0){
@@ -263,12 +279,20 @@ public class Server extends Thread {
             }
         }
 
+        /**
+         * Ustawia gracza który teraz wykona ruch
+         * @return Zwraca numer gracza który teraz wykona ruch
+         */
         public int setMovingPlayer(){
             movingPlayerIndex++;
             movingPlayerIndex=movingPlayerIndex%playersCount;
             return playersTurn[movingPlayerIndex];
         }
 
+        /**
+         * Wysyła wiadomość do wszystkich graczy o numerze gracza która zaczyna rozgrywkę
+         * @param starting ID gracza który rozpoczyna
+         */
         public void writeStartingPlayer(int starting){
             try{
                 for(Player player: players){
