@@ -1,5 +1,11 @@
 package pl.builders;
-
+/**Klasa do testowania warunku zwycięstwa
+ * (wystarczy pare ruchów)
+ * aby użyć trzeba zamienić w konstruktorze Board
+ * concrete = new BoardThree(); na
+ * concrete = new BoardThreeTest();
+ * oraz tak samo w klasie ServerBoard
+ * */
 public class BoardThreeTest extends ConcreteBoard{
     public BoardThreeTest() {
         drawBoard();
@@ -13,7 +19,7 @@ public class BoardThreeTest extends ConcreteBoard{
         drawBase(8,17,4,true,0,1);
         setTestPos();
     }
-
+    /** Funkcja przesuwa odpowiedznie piony */
     void setTestPos(){
         fields.get(0).setPlayer(1);
         fields.get(62).setPlayer(0);
