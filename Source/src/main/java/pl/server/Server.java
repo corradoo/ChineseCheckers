@@ -1,6 +1,9 @@
 package pl.server;
 
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,10 +16,10 @@ public class Server extends Thread {
     ServerSocket serverSocket;
     private ArrayList<Player> players;
     ServerBoard serverBoard;
-
+    int gameId = 1;
     /**
      * Ustawia socket serwera
-     * @throws IOException
+     * @throws IOException niudane połączenie
      */
     public Server() throws IOException {
         serverSocket = new ServerSocket(58000);
@@ -45,11 +48,11 @@ public class Server extends Thread {
         while (true) {
 
 
-            if (player > number && counter == 0) {
+            if (player > number) {
                 System.out.println("START");
                 sessionHandler = new SessionHandler();
                 sessionHandler.start();
-                counter++;
+                break;
             }
 
             while (player <= number) {
@@ -125,7 +128,11 @@ public class Server extends Thread {
 
                 if(gameOver){
                     try{
+                        for(Player p : players) {
+                            p.socket.close();
+                        }
                         serverSocket.close();
+                        saveGameToDB();
 
                     }
                     catch (Exception e){
@@ -149,6 +156,7 @@ public class Server extends Thread {
                         serverBoard.jumped = false;
 
                         while(!validMove) {
+                            if(gameOver) break;
                             player.getMessage();
                             String msg = player.fromServer;
                             //Jeżeli gracz pominął kolejkę wyślij msg o pominięciu
@@ -184,6 +192,7 @@ public class Server extends Thread {
 
                                     sendMessageInt(current);
                                     while(serverBoard.nextJumpPossible()) {
+                                        if(gameOver) break;
                                         player.getMessage();
                                         String nextMsg = player.fromServer;
                                         if(nextMsg.equals("skip")) {
@@ -261,6 +270,17 @@ public class Server extends Thread {
 
             }
 
+        }
+
+        private void saveGameToDB() {
+            List<Move> game = serverBoard.getMoveHistory();
+            ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+            MoveDAO md = (MoveDAO)context.getBean("jdbcTemplate");
+            md.putGame(players.size());
+            gameId = md.getGameId();
+            for(Move m : game) {
+                md.saveMove(m, gameId);
+            }
         }
 
         /**

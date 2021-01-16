@@ -3,12 +3,17 @@ package pl.server;
 import pl.client.Field;
 import pl.builders.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ServerBoard {
     ConcreteBoard concrete;
     ArrayList<Field> fields;
     double jumpDist = 30;
     ArrayList<Integer> players = new ArrayList<>();
+
+    int gameId;
+    int count = 1;
+    List<Move> moves = new ArrayList<>();
 
     boolean jumped = false;
     public int prevIndex;
@@ -24,7 +29,7 @@ public class ServerBoard {
                 concrete = new BoardTwo();
                 break;
             case 3:
-                concrete = new BoardThree();
+                concrete = new BoardThreeTest();
                 break;
             case 4:
                 concrete = new BoardFour();
@@ -54,6 +59,7 @@ public class ServerBoard {
         //Czy end jest puste
         if(fields.get(start).getPlayer() != 0 && calculateDist(start,end) <= jumpDist && fields.get(end).getPlayer() == 0) {
             move(start,end);
+            saveMove(start,end);
             return true;
         }
         if(jumpable(start,end)) {
@@ -61,6 +67,7 @@ public class ServerBoard {
             movingIndex = end;
             prevIndex = start;
             jumped = true;
+            saveMove(start,end);
             return true;
         }
         return false;
@@ -187,6 +194,7 @@ public class ServerBoard {
             move(start,end);
             movingIndex = end;
             prevIndex = start;
+            saveMove(start,end);
             return true;
         }
         return false;
@@ -210,5 +218,14 @@ public class ServerBoard {
             }
         }
         return false;
+    }
+
+    public void saveMove(int start, int end){
+        moves.add(new Move(start,end,count));
+        count++;
+    }
+
+    public List<Move> getMoveHistory() {
+        return this.moves;
     }
 }

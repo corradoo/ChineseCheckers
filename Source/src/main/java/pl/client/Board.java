@@ -43,7 +43,7 @@ public class Board {
                 concrete = new BoardTwo();
                 break;
             case 3:
-                concrete = new BoardThree();
+                concrete = new BoardThreeTest();
                 break;
             case 4:
                 concrete = new BoardFour();
@@ -110,7 +110,7 @@ public class Board {
         currentFieldNr = -1;
         hideMoves();
         updateCircles();
-        circles.get(prev).setFill(Color.rgb(120,0,0));
+        circles.get(prev).setFill(Color.rgb(56,10,10));
     }
 
     /**Funkcja pokazująca użytkownikowi dozwolone ruchy*/

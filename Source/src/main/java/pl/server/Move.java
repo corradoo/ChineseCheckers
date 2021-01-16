@@ -1,26 +1,15 @@
 package pl.server;
 
 public class Move {
-    private int gameId;
     private int from;
     private int to;
     private int moveNr;
 
-    public Move(int gameId, int from, int to, int moveNr) {
-        this.gameId = gameId;
+    public Move(int from, int to, int moveNr) {
         this.from = from;
         this.to = to;
         this.moveNr = moveNr;
     }
-
-    public int getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
-    }
-
     public int getFrom() {
         return from;
     }

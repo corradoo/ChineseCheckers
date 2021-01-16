@@ -38,9 +38,9 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-core:5.3.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-context:4.3.0.RELEASE" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-aop:4.3.0.RELEASE" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-expression:4.3.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context:4.3.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-aop:4.3.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-expression:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.6" level="project" />
   </component>
 </module>
