@@ -4,11 +4,9 @@ package pl.server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-
 
 public class Server extends Thread {
 
@@ -228,6 +226,7 @@ public class Server extends Thread {
                 }
             }
         }
+
         /** Wysyła wiadomośc o kolejce do wszystkich graczy*/
         public void sendMessageInt(int next){
             for(Player p: players){
@@ -304,14 +303,7 @@ public class Server extends Thread {
                 e.printStackTrace();
             }
         }
-
-
-
-
-
     }
-
-
 }
 
 
